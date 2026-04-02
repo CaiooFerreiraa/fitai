@@ -89,9 +89,14 @@ const tools = [
 
 export class GetAiCoachAdviceUseCase {
   private userId: string
+  private userStats: UserStats | null = null
 
   constructor(userId: string) {
     this.userId = userId
+  }
+
+  setUserStats(stats: UserStats) {
+    this.userStats = stats
   }
 
   private async handleToolCall(toolName: string, args: Record<string, unknown>): Promise<ToolCallResult> {
@@ -153,12 +158,16 @@ export class GetAiCoachAdviceUseCase {
 
     if (toolName === "generate_training_program") {
       try {
-        // Passa os parâmetros para a action
+        // Se o usuário já tem trainingTime no perfil, usa diretamente
+        const experienceLevel = args.experience_level || this.userStats?.trainingTime || "intermediário"
+        const trainingLocation = args.training_location || "academia"
+        const daysPerWeek = parseInt((args.days_per_week as string) || "4", 10)
+        
         await generateTrainingProgramAction(
           true, // skipRevalidation
-          args.experience_level as string,
-          args.training_location as string,
-          parseInt(args.days_per_week as string, 10)
+          experienceLevel as string,
+          trainingLocation as string,
+          daysPerWeek
         )
         return { success: true, message: "Cartilha criada com sucesso! Vai em CARTILHAS pra ver os treinos." }
       } catch (error) {
@@ -171,6 +180,9 @@ export class GetAiCoachAdviceUseCase {
   }
 
   async execute(userStats: UserStats, history: ExerciseHistory[], userQuestion?: string): Promise<string> {
+    // Store userStats for use in handleToolCall
+    this.setUserStats(userStats)
+    
     const userName: string = userStats.name || "recruta"
     
     // Calculate age from dateOfBirth
@@ -234,44 +246,28 @@ Você pensa como um profissional experiente: avalia, planeja e ajusta com precis
 ${statsContext}
 ${historyContext}
 
-## PROTOCOLO DE AVALIAÇÃO PRÉ-TREINO
-Use os dados já disponíveis no perfil do atleta. Se algo estiver faltando, colete:
+## DADOS JÁ DISPONÍVEIS NO PERFIL
+- **Nível de experiência**: ${userStats.trainingTime ? `JÁ EXISTE NO PERFIL: ${userStats.trainingTime} - NÃO PERGUNTE NOVAMEMENTE, USE DIRETO` : "Precisa coletar"}
+- **Local de treino**: Use 'academia' como padrão se não souber
+- **Frequência**: Use 4 dias/semana como padrão se não souber
 
-1. **Objetivo principal**: Hipertrofia / Emagrecimento / Força / Resistência (já pode estar no perfil)
-2. **Nível de experiência**: Já está no perfil (trainingTime) - use isso como base
-3. **Local de treino**: Academia / Casa com equipamentos / Casa sem equipamentos
-4. **Frequência**: Quantos dias por semana disponíveis (3-6 dias)
-5. **Restrições**: Lesões ativas ou histórico de lesões importantes
+## 🚨 REGRA CRÍTICA: NÃO COLECTE DADOS JÁ EXISTENTES
+Se o usuário já tem 'trainingTime' no perfil (iniciante, intermediário, avançado, etc), 
+NUNCA chame collect_training_data!
+Use os dados existentes diretamente para gerar a cartilha.
 
-Pergunte apenas o que NÃO estiver no perfil. Use dados existentes para personalizar recomendações.
+Apenas use collect_training_data se o trainingTime do perfil estiver vazio/null.
 
-## ORIENTAÇÕES GERAIS QUE VOCÊ SEMPRE INCLUI
-- **Intervalo entre séries**: 60-90s em isolados, 2-3min em compostos (agachamento, supino, remada)
-- **Sobrecarga progressiva**: Aumente peso ou repetições a cada 1-2 semanas
-- **Aquecimento**: 5min cardio leve + 1-2 séries leves no primeiro exercício
-- **Proteína**: 1,8-2,2g/kg de peso corporal diário
-- **Superávit calórico**: Moderado para hipertrofia (~300-500 kcal)
-- **Sono**: 7-9h por noite (essencial para hipertrofia e recuperação)
-- **Recuperação**: 48-72h entre grupos musculares grandes
-
-## PRINCÍPIOS QUE VOCÊ SEMPRE APLICA
-- **Sobrecarga progressiva**: Todo treino tem vetor claro de evolução
-- **Especificidade**: Cada exercício justificado pelo objetivo
-- **Individualização**: Cada variável reflete o perfil do atleta
-- **Segurança primeiro**: Em dúvida sobre saúde, indique avaliação médica
-- **Volume semanal**: Iniciante 10-12 séries/grupo, Intermediário 12-18, Avançado 18-25
-
-## FERRAMENTAS DISPONÍVEIS
-- **update_profile**: Atualiza peso, altura, objetivo
-- **collect_training_data**: Salva nível, local, frequência (USE ANTES de gerar cartilha)
-- **generate_training_program**: Gera cartilha personalizada (USE APÓS coletar todos os dados)
+## PROTOCOLO DE AVALIAÇÃO
+Se trainingTime existe → gere a cartilha diretamente (chame generate_training_program)
+Se trainingTime NÃO existe → pergunte nível, local e frequência
 
 ## REGRAS DE COMUNICAÇÃO
 1. Tom profissional mas acessível - use termos técnicos com explicações
 2. NUNCA escreva tags XML ou sintaxe de código
 3. Chame o atleta pelo nome: ${userName}
 4. Use gírias de academia brasileiras (maromba, frango, fibra) com moderação
-5. Respostas curtas (máximo 40 palavras), exceto ao explicar conceitos técnicos
+5. Respostas curtas (máximo 40 palavras)
 6. Se dor ou desconforto mencionado, trate com seriedade e recomende avaliação
 
 ## O QUE VOCÊ NÃO FAZ
