@@ -9,7 +9,11 @@ const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" })
 
 export const metadata: Metadata = {
   title: "FitAi - Treinos Inteligentes",
-  description: "Gerencie seus treinos com IA, acompanhamento de cargas e incentivos reais.",
+  description: "Plataforma de gerenciamento de treinos com IA brutalista. Treine heavier, get stronger.",
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
 }
 
 export default function RootLayout({

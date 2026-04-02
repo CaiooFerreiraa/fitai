@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🔥 FitAi - Treinos Inteligentes com IA
 
-## Getting Started
+Plataforma de gerenciamento de treinos com feedback agressivo por inteligência artificial. Design brutalista-industrial focado em performance.
 
-First, run the development server:
+---
+
+## 🚀 Tecnologias
+
+- **Next.js 15** - Framework React com App Router
+- **Auth.js** - Autenticação com credentials
+- **Prisma** - ORM para PostgreSQL (Neon)
+- **Groq API** - Inteligência Artificial
+- **Tailwind CSS** - Estilização brutalista
+- **Lucide React** - Ícones
+
+---
+
+## 🎯 Features
+
+- 📋 **Planos de Treino** - Organize seus treinos por dia
+- 🤖 **IA Coach** - Chat com inteligência artificial que entende seu progresso
+- 📊 **Registro de Carga** - Acompanhe sua evolução
+- 💪 **Feedback Agressivo** - IA motiva de forma brutal
+- 🏋️ **Cartilhas Automáticas** - Gere programas de treino via IA
+- 👑 **Sistema Premium** - R$ 15/mês para acesso total à IA
+
+---
+
+## 🛠️ Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+# Instalar dependências
+bun install
+
+# Configurar banco (Neon PostgreSQL)
+# Edite o .env com sua DATABASE_URL
+
+# Gerar Prisma Client
+bun prisma generate
+
+# Executar migration
+bun prisma db push
+
+# Iniciar servidor
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🔧 Variáveis de Ambiente
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+# Banco de Dados (Neon/Postgres)
+DATABASE_URL="postgresql://..."
 
-## Learn More
+# Auth.js
+AUTH_SECRET="sua-chave-secreta"
 
-To learn more about Next.js, take a look at the following resources:
+# Groq API (IA)
+GROQ_API_KEY="sua-chave-groq"
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📱 Páginas
 
-## Deploy on Vercel
+- `/` - Home com treino do dia
+- `/login` - Login
+- `/register` - Cadastro
+- `/profile` - Perfil e biometria
+- `/config` - Configuração de treinos
+- `/workout/[id]` - Sessão de treino
+- `/programs` - Cartilhas de treino
+- `/ai-coach` - Chat com IA
+- `/premium` - Informações do plano
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🎨 Design
+
+- Estilo **Brutalist-Industrial** (Red Aura)
+- Cores: #ff0033 (primária), #0a0a0b (fundo)
+- Tipografia: Inter + Italic Black
+- Mobile-first
+
+---
+
+## 📄 Licença
+
+MIT © 2026 FitAi
