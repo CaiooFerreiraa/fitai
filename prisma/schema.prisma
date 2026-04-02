@@ -1,0 +1,125 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id              String           @id @default(cuid())
+  name            String?
+  email           String?          @unique
+  password        String?
+  phone           String?
+  height          Float?
+  weight          Float?
+  goal            String?          @db.Text
+  emailVerified   DateTime?
+  image           String?
+  isPremium       Boolean          @default(false)
+  accounts        Account[]
+  sessions        Session[]
+  workoutPlans    WorkoutPlan[]
+  workoutLog      WorkoutLog[]
+  trainingPrograms TrainingProgram[]
+  activeProgramId String?
+  activeProgram   TrainingProgram? @relation("ActiveProgram", fields: [activeProgramId], references: [id])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model TrainingProgram {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  description String?       @db.Text
+  goal        String?       @db.Text
+  duration    String?       // Ex: "4 semanas", "8 semanas"
+  workoutPlans WorkoutPlan[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  activeUsers User[]        @relation("ActiveProgram")
+}
+
+model WorkoutPlan {
+  id                String           @id @default(cuid())
+  userId            String
+  user              User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trainingProgramId String?
+  trainingProgram   TrainingProgram? @relation(fields: [trainingProgramId], references: [id], onDelete: Cascade)
+  dayOfWeek         String           // Using string for day of week for flexibility or enum later
+  name              String?
+  exercises         Exercise[]
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  
+  @@unique([userId, dayOfWeek])
+}
+
+model Exercise {
+  id            String      @id @default(cuid())
+  workoutPlanId String
+  workoutPlan   WorkoutPlan @relation(fields: [workoutPlanId], references: [id], onDelete: Cascade)
+  name          String
+  sets          Int
+  reps          Int
+  timer         Int         // time in seconds
+  order         Int         @default(0)
+  createdAt     DateTime    @default(now())
+  exerciseLogs  ExerciseLog[]
+}
+
+model WorkoutLog {
+  id           String        @id @default(cuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date         DateTime      @default(now())
+  exerciseLogs ExerciseLog[]
+}
+
+model ExerciseLog {
+  id            String     @id @default(cuid())
+  workoutLogId  String
+  workoutLog    WorkoutLog @relation(fields: [workoutLogId], references: [id], onDelete: Cascade)
+  exerciseId    String
+  exercise      Exercise   @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  weight        Float      @default(0)
+  setsReached   Int?
+  repsReached   Int?
+  createdAt     DateTime   @default(now())
+}
