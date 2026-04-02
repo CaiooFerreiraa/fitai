@@ -40,12 +40,25 @@ model User {
   email           String?          @unique
   password        String?
   phone           String?
+  
+  // Dados biométricos
   height          Float?
   weight          Float?
+  dateOfBirth     DateTime?
+  gender          String?          // "masculino", "feminino", "outro"
+  
+  // Dados de treino
   goal            String?          @db.Text
+  trainingTime    String?          // "menos_1_ano", "1_3_anos", "mais_3_anos"
+  
+  // Auth.js
   emailVerified   DateTime?
   image           String?
+  
+  // Premium
   isPremium       Boolean          @default(false)
+  
+  // Relations
   accounts        Account[]
   sessions        Session[]
   workoutPlans    WorkoutPlan[]

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { registerAction } from "@/actions/auth-actions"
-import { Lock, User, Dumbbell, Sparkles, ArrowRight, Loader2, AlertCircle } from "lucide-react"
+import { Lock, User, Dumbbell, Sparkles, ArrowRight, Loader2, AlertCircle, Calendar, Users } from "lucide-react"
 import Link from "next/link"
 import { useFormStatus } from "react-dom"
 import { useActionState } from "react"
@@ -167,6 +167,61 @@ export default function RegisterPage() {
                   placeholder="••••••••••"
                   className="h-14 sm:h-16 bg-[#0a0a0b] lg:bg-[#09090b] border-2 border-[#1c1c1f] focus:border-[#ff0033] text-2xl font-bold tracking-[0.3em] rounded-2xl px-5 cursor-text transition-all placeholder:text-neutral-800 text-white focus:ring-0 focus-visible:ring-0"
                 />
+              </div>
+
+              {/* Data de Nascimento */}
+              <div className="space-y-2 group">
+                <Label htmlFor="dateOfBirth" className="flex items-center gap-2 text-[10px] font-black text-neutral-600 uppercase tracking-[0.4em] italic group-focus-within:text-[#ff0033] transition-colors">
+                  <Calendar className="w-3 h-3" strokeWidth={4} />
+                  [ 04 ] DATA DE NASCIMENTO
+                </Label>
+                <Input
+                  id="dateOfBirth"
+                  name="dateOfBirth"
+                  type="date"
+                  required
+                  max={new Date().toISOString().split('T')[0]}
+                  className="h-14 sm:h-16 bg-[#0a0a0b] lg:bg-[#09090b] border-2 border-[#1c1c1f] focus:border-[#ff0033] text-sm sm:text-base font-bold uppercase rounded-2xl px-5 cursor-text transition-all text-white focus:ring-0 focus-visible:ring-0"
+                />
+              </div>
+
+              {/* Sexo */}
+              <div className="space-y-2 group">
+                <Label htmlFor="gender" className="flex items-center gap-2 text-[10px] font-black text-neutral-600 uppercase tracking-[0.4em] italic group-focus-within:text-[#ff0033] transition-colors">
+                  <Users className="w-3 h-3" strokeWidth={4} />
+                  [ 05 ] SEXO
+                </Label>
+                <select
+                  id="gender"
+                  name="gender"
+                  required
+                  className="h-14 sm:h-16 w-full bg-[#0a0a0b] lg:bg-[#09090b] border-2 border-[#1c1c1f] focus:border-[#ff0033] text-sm sm:text-base font-bold uppercase rounded-2xl px-5 cursor-pointer transition-all text-white focus:ring-0 focus-visible:ring-0 italic"
+                >
+                  <option value="">SELECIONE</option>
+                  <option value="masculino">MASCULINO</option>
+                  <option value="feminino">FEMININO</option>
+                  <option value="outro">OUTRO</option>
+                </select>
+              </div>
+
+              {/* Tempo de Treino */}
+              <div className="space-y-2 group">
+                <Label htmlFor="trainingTime" className="flex items-center gap-2 text-[10px] font-black text-neutral-600 uppercase tracking-[0.4em] italic group-focus-within:text-[#ff0033] transition-colors">
+                  <Dumbbell className="w-3 h-3" strokeWidth={4} />
+                  [ 06 ] TEMPO DE TREINO
+                </Label>
+                <select
+                  id="trainingTime"
+                  name="trainingTime"
+                  required
+                  className="h-14 sm:h-16 w-full bg-[#0a0a0b] lg:bg-[#09090b] border-2 border-[#1c1c1f] focus:border-[#ff0033] text-sm sm:text-base font-bold uppercase rounded-2xl px-5 cursor-pointer transition-all text-white focus:ring-0 focus-visible:ring-0 italic"
+                >
+                  <option value="">SELECIONE</option>
+                  <option value="sedentario">SEDENTÁRIO</option>
+                  <option value="menos_1_ano">MENOS DE 1 ANO</option>
+                  <option value="1_3_anos">1-3 ANOS</option>
+                  <option value="mais_3_anos">MAIS DE 3 ANOS</option>
+                </select>
               </div>
 
               <div className="pt-2">

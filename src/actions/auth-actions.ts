@@ -40,8 +40,11 @@ export async function registerAction(prevState: any, formData: FormData) {
   const name = formData.get("name") as string
   const email = formData.get("email") as string
   const password = formData.get("password") as string
+  const dateOfBirth = formData.get("dateOfBirth") as string
+  const gender = formData.get("gender") as string
+  const trainingTime = formData.get("trainingTime") as string
 
-  if (!name || !email || !password) {
+  if (!name || !email || !password || !dateOfBirth || !gender || !trainingTime) {
     return { error: "CAMPOS INCOMPLETOS. O SISTEMA EXIGE DADOS TOTAIS." }
   }
 
@@ -62,6 +65,9 @@ export async function registerAction(prevState: any, formData: FormData) {
         name,
         email,
         password: hashedPassword,
+        dateOfBirth: new Date(dateOfBirth),
+        gender,
+        trainingTime,
       }
     })
 
