@@ -32,6 +32,8 @@ interface TrainingOptions {
   experienceLevel?: string
   trainingLocation?: string
   daysPerWeek?: number
+  age?: number
+  gender?: string
 }
 
 export class GetAiTrainingProgramUseCase {
@@ -43,6 +45,9 @@ export class GetAiTrainingProgramUseCase {
         weight: true,
         height: true,
         goal: true,
+        dateOfBirth: true,
+        gender: true,
+        trainingTime: true,
       }
     })
 
@@ -51,16 +56,33 @@ export class GetAiTrainingProgramUseCase {
     const userWeight: number | null = user?.weight || null
     const userHeight: number | null = user?.height || null
 
+    // Calculate age if dateOfBirth is available
+    let userAge: number | null = null
+    if (user?.dateOfBirth) {
+      const today: Date = new Date()
+      const birthDate: Date = new Date(user.dateOfBirth)
+      userAge = today.getFullYear() - birthDate.getFullYear()
+      const monthDiff: number = today.getMonth() - birthDate.getMonth()
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        userAge--
+      }
+    }
+
     // Extract training parameters
-    const experienceLevel: string = options?.experienceLevel || "intermediário"
+    const experienceLevel: string = options?.experienceLevel || user?.trainingTime || "intermediário"
     const trainingLocation: string = options?.trainingLocation || "academia"
     const daysPerWeek: number = options?.daysPerWeek || 5
+    const gender: string = user?.gender || options?.gender || "masculino"
 
     const biometryContext: string = userWeight && userHeight 
       ? `${userName} pesa ${userWeight}kg e tem ${userHeight}m de altura.` 
       : `Dados biométricos de ${userName} não disponíveis.`
 
-    const trainingContext: string = `Nível: ${experienceLevel}. Local: ${trainingLocation}. Frequência: ${daysPerWeek} dias/semana.`
+    const ageContext: string = userAge 
+      ? `Idade: ${userAge} anos. ${userAge < 18 ? "Menor de idade - foco em coordenação e desenvolvimento motor." : userAge >= 50 ? "Sênior - priorizar mobilidade, baixo impacto e densidade óssea." : "Adulto em idade produtiva."}`
+      : "Idade não informada."
+
+    const trainingContext: string = `Nível: ${experienceLevel}. Local: ${trainingLocation}. Frequência: ${daysPerWeek} dias/semana. Gênero: ${gender}.`
 
     const systemPrompt: string = `## IDENTIDADE
 Você é um personal trainer e especialista em educação física com formação em ciências do exercício, fisiologia e nutrição esportiva.
@@ -70,6 +92,7 @@ Seu raciocínio é fundamentado em evidências científicas (NSCA, ACSM, NASM, S
 Nome: ${userName}
 Objetivo: ${userGoal}
 ${biometryContext}
+${ageContext}
 ${trainingContext}
 
 ## ORIENTAÇÕES GERAIS (INCLUIR EM TODAS AS CARTILHAS)
@@ -152,6 +175,25 @@ Distribua as séries ao longo dos ${daysPerWeek} dias de treino:
 - Ombros: ${experienceLevel === "iniciante" ? "8-10" : experienceLevel === "intermediário" ? "10-14" : "14-20"} séries/semana
 - Bíceps: ${experienceLevel === "iniciante" ? "6-8" : experienceLevel === "intermediário" ? "8-12" : "12-16"} séries/semana
 - Tríceps: ${experienceLevel === "iniciante" ? "6-8" : experienceLevel === "intermediário" ? "8-12" : "12-16"} séries/semana
+
+${userAge !== null && userAge >= 50 ? `## ADAPTAÇÕES PARA IDADE (${userAge} anos)
+- Priorizar exercícios de baixo impacto (elíptico, bike, swimming)
+- Aumentar tempo de aquecimento para 10-15 minutos
+- Reduzir cargas extremas, focar em técnica e tempo sob tensão
+- Incluir exercícios de mobilidade e alongamento diário
+- Atenção especial à densidade óssea: incluir peso morto, agachamento com carga leve
+- Descansos mais longos: 3-4 minutos em compostos para segurança articular
+- Evitar exercícios que causem impacto excessivo nas articulações
+- Considerar suplementos de cálcio e vitamina D` : ""}
+
+${userAge !== null && userAge < 18 ? `## ADAPTAÇÕES PARA MENOR DE IDADE (${userAge} anos)
+- Foco em desenvolvimento motor geral e coordenação
+- Exercícios com peso corporal antes de cargas externas
+- Priorizar exercícios que desenvolvam równowaga e propriocepção
+- Evitar treinos de alta intensidade; focar em diversãeste e movimento
+- Ensinar técnica correta sem pressa de aumentar carga
+- Atividades esportivas variadas são recomendadas além da musculação
+- Supervisionamento parental Obrigatório` : ""}
 
 ## FORMATO DE SAÍDA (JSON)
 Retorne APENAS um JSON válido (sem markdown, sem explicações extras):

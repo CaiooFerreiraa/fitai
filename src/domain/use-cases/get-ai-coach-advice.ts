@@ -7,6 +7,9 @@ interface UserStats {
   weight: number | null
   height: number | null
   goal: string | null
+  dateOfBirth: Date | null
+  gender: string | null
+  trainingTime: string | null
 }
 
 interface ExerciseHistory {
@@ -171,9 +174,54 @@ export class GetAiCoachAdviceUseCase {
 
   async execute(userStats: UserStats, history: ExerciseHistory[], userQuestion?: string): Promise<string> {
     const userName: string = userStats.name || "recruta"
+    
+    // Calculate age from dateOfBirth
+    let ageContext: string = ""
+    if (userStats.dateOfBirth) {
+      const today: Date = new Date()
+      const birthDate: Date = new Date(userStats.dateOfBirth)
+      let age: number = today.getFullYear() - birthDate.getFullYear()
+      const monthDiff: number = today.getMonth() - birthDate.getMonth()
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--
+      }
+      
+      // Adjust training level based on age
+      if (age < 18) {
+        ageContext = `${userName} tem ${age} anos (MENOR DE IDADE - requer acompanhamento parental e foco em desenvolvimento motor geral). `
+      } else if (age >= 50) {
+        ageContext = `${userName} tem ${age} anos (SÊNIOR - priorizar exercícios de baixo impacto, mobilidade, e atenção à densidade óssea). `
+      } else {
+        ageContext = `${userName} tem ${age} anos. `
+      }
+    }
+    
+    // Gender context for training adjustments
+    let genderContext: string = ""
+    if (userStats.gender) {
+      const genderLabels: Record<string, string> = {
+        "masculino": "Homem",
+        "feminino": "Mulher",
+        "outro": "Atleta"
+      }
+      genderContext = `Gênero: ${genderLabels[userStats.gender] || userStats.gender}. `
+    }
+    
+    // Training experience context
+    let trainingContext: string = ""
+    if (userStats.trainingTime) {
+      const trainingLabels: Record<string, string> = {
+        "sedentario": "Sedentário (sem experiência)",
+        "menos_1_ano": "Iniciante (<1 ano)",
+        "1_3_anos": "Intermediário (1-3 anos)",
+        "mais_3_anos": "Avançado (3+ anos)"
+      }
+      trainingContext = `Experiência: ${trainingLabels[userStats.trainingTime] || userStats.trainingTime}. `
+    }
+    
     const statsContext: string = userStats.weight && userStats.height 
-      ? `${userName} pesa ${userStats.weight}kg, tem ${userStats.height}m de altura. Objetivo: ${userStats.goal || "evolução geral"}.` 
-      : `Dados biométricos de ${userName} não disponíveis.`
+      ? `${userName} pesa ${userStats.weight}kg, tem ${userStats.height}m. ${ageContext}${genderContext}${trainingContext}Objetivo: ${userStats.goal || "evolução geral"}.` 
+      : `${ageContext}${genderContext}${trainingContext}Dados biométricos de ${userName} não disponíveis.`
     
     const historyContext: string = history.length > 0 
       ? `Últimos exercícios: ${history.slice(0, 5).map((h: ExerciseHistory) => `${h.exercise.name} (${h.weight}kg x ${h.repsReached} reps)`).join(", ")}.`
@@ -189,15 +237,15 @@ ${statsContext}
 ${historyContext}
 
 ## PROTOCOLO DE AVALIAÇÃO PRÉ-TREINO
-Antes de gerar cartilha, colete OBRIGATORIAMENTE:
+Use os dados já disponíveis no perfil do atleta. Se algo estiver faltando, colete:
 
-1. **Objetivo principal**: Hipertrofia / Emagrecimento / Força / Resistência
-2. **Nível de experiência**: Iniciante (<1 ano) / Intermediário (1-3 anos) / Avançado (3+ anos)
+1. **Objetivo principal**: Hipertrofia / Emagrecimento / Força / Resistência (já pode estar no perfil)
+2. **Nível de experiência**: Já está no perfil (trainingTime) - use isso como base
 3. **Local de treino**: Academia / Casa com equipamentos / Casa sem equipamentos
 4. **Frequência**: Quantos dias por semana disponíveis (3-6 dias)
 5. **Restrições**: Lesões ativas ou histórico de lesões importantes
 
-Pergunte UMA de cada vez, de forma direta e profissional.
+Pergunte apenas o que NÃO estiver no perfil. Use dados existentes para personalizar recomendações.
 
 ## ORIENTAÇÕES GERAIS QUE VOCÊ SEMPRE INCLUI
 - **Intervalo entre séries**: 60-90s em isolados, 2-3min em compostos (agachamento, supino, remada)

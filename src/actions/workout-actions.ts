@@ -83,11 +83,17 @@ export async function getAiCoachAdviceAction(userQuestion?: string) {
     weight: profile.weight,
     height: profile.height,
     goal: profile.goal,
+    dateOfBirth: profile.dateOfBirth,
+    gender: profile.gender,
+    trainingTime: profile.trainingTime,
   } : {
     name: null,
     weight: null,
     height: null,
     goal: null,
+    dateOfBirth: null,
+    gender: null,
+    trainingTime: null,
   }
 
   // Create coach instance with userId for tool calls
