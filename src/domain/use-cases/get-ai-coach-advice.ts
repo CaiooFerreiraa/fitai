@@ -116,7 +116,11 @@ export class GetAiCoachAdviceUseCase {
 
     if (toolName === "collect_training_data") {
       try {
-        let healthRestrictions = args.health_restrictions as string || "nenhuma"
+        // Normalize health_restrictions
+        let healthRestrictions = args.health_restrictions as string
+        if (!healthRestrictions || healthRestrictions === "" || healthRestrictions === "null") {
+          healthRestrictions = "nenhuma"
+        }
         
         // Normalize session_time to valid values
         let sessionTime = args.session_time as string || "60min"
@@ -143,7 +147,7 @@ export class GetAiCoachAdviceUseCase {
           WHERE id = ${this.userId}
         `
         
-        return { success: true, message: `Anamnese coletada! Saúde: ${healthRestrictions}, Tempo: ${sessionTime}, Divisão: ${splitPreference}. Vou preparar sua cartilha agora!` }
+        return { success: true, message: `Anamnese completa! Saúde: ${healthRestrictions}, Tempo: ${sessionTime}, Divisão: ${splitPreference}.` }
       } catch (error) {
         console.error("COLLECT_TRAINING_DATA_ERROR:", error)
         return { success: false, message: "Erro ao salvar dados de treino." }
@@ -331,9 +335,9 @@ Colete as 3 respostas ANTES de gerar a cartilha. Use collect_training_data para 
         const result = await this.handleToolCall(toolName, args)
 
         if (result.success) {
-          return `${result.message} Agora vamos continuar com seu treino!`
+          return `${result.message}`
         }
-        return `${result.message} Tente novamente.`
+        return `${result.message}`
       }
 
       // Filtro de segurança: remove tags XML/função que podem vazar na resposta
