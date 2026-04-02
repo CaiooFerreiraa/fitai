@@ -130,7 +130,7 @@ ${historyContext}`
           { role: "user", content: userPrompt }
         ],
         tools: tools,
-        tool_choice: { type: "function", function: { name: "auto" } },
+        tool_choice: "auto",
         model: "llama-3.3-70b-versatile",
       })
 
