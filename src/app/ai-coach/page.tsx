@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import { useSession } from "next-auth/react"
-import { getAiCoachAdviceAction } from "@/actions/workout-actions"
+import { getAiCoachAdviceAction, getAiCoachWelcomeAction } from "@/actions/workout-actions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ChevronLeft, Zap, Send, Loader2, Target, ShieldAlert, Activity, Lock, Crown } from "lucide-react"
@@ -24,7 +24,7 @@ export default function AiCoachPage() {
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // Initial advice
+    // Get welcome message - premium users get full AI, non-premium get motivational message
     getAiCoachAdviceAction().then(res => {
       setMessages([{ role: "coach", text: res }])
       setIsInitialLoading(false)
@@ -32,9 +32,13 @@ export default function AiCoachPage() {
     }).catch((error: Error) => {
       if (error.message === "PREMIUM_REQUIRED") {
         setIsPremium(false)
-        setMessages([{ role: "coach", text: "ACESSO NEGADO. APENAS PREMIUM." }])
+        // Get motivational welcome for non-premium
+        getAiCoachWelcomeAction().then(msg => {
+          setMessages([{ role: "coach", text: msg }])
+        })
+      } else {
+        setIsInitialLoading(false)
       }
-      setIsInitialLoading(false)
     })
   }, [])
 
@@ -179,7 +183,7 @@ export default function AiCoachPage() {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-            placeholder="PERGUNTE AO COACH..."
+            placeholder="E AI, MAROMBA! VAMO TREINAR? 💪"
             disabled={isLoading || isInitialLoading || !isPremium}
             className="h-12 md:h-14 bg-black border-2 border-black focus-visible:border-[#ff0033] focus-visible:ring-0 rounded-xl md:rounded-2xl font-black italic uppercase italic tracking-tighter transition-all px-4 md:px-6 shadow-[4px_4px_0_0_#000]"
           />

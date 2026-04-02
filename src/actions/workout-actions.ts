@@ -100,3 +100,17 @@ export async function getAiCoachAdviceAction(userQuestion?: string) {
   const coachUseCase = new GetAiCoachAdviceUseCase(session.user.id)
   return await coachUseCase.execute(userStats, history, userQuestion)
 }
+
+// Get welcome message for non-premium users
+export async function getAiCoachWelcomeAction() {
+  const motivationalPhrases = [
+    "E AI, MAROMBA! QUEM NÃO TREINA TA FORA DA CORRIDA! 🔥 O QUE VOCÊ QUER FAZER HOJE?",
+    "BEM-VINDO AO DOJO! O FERRO NÃO TEM PIEDADE, MAS EU TENHO! 🚀 QUAL O PLANO?",
+    "O TREM PARTIU, RECRUTA! SEM VOLTA AGORA! 💪 VAMO VER O QUE TEM PRA HOJE?",
+    "SEU LUGAR É AQUI, NO CAMPO DE BATALHA! 🎯 ME CONTA - QUER FAZER O QUE HOJE?",
+    "O GENERAL ESPERA VOCÊ! 🏆 TÁ PREPARADO PRO TREINO OU VAI DAR EXCUSA HOJE?",
+  ]
+  
+  // Return a random motivational phrase
+  return motivationalPhrases[Math.floor(Math.random() * motivationalPhrases.length)]
+}
