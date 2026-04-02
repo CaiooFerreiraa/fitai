@@ -56,16 +56,13 @@ const tools = [
           },
           session_time: { 
             type: "string", 
-            description: "Tempo disponível por sessão",
-            enum: ["30min", "45min", "60min", "mais de 1h"]
+            description: "Tempo disponível por sessão (use exatamente: 30min, 45min, 60min, mais de 1h)"
           },
           split_preference: { 
             type: "string", 
-            description: "Preferência de divisão do treino",
-            enum: ["Full Body", "Upper-Lower", "Push-Pull-Legs", "ABC", "ABCDE", "outra"]
+            description: "Preferência de divisão (use exatamente: Full Body, Upper-Lower, Push-Pull-Legs, ABC, ABCDE, outra)"
           }
-        },
-        required: ["health_restrictions", "session_time", "split_preference"]
+        }
       }
     }
   },
@@ -80,8 +77,7 @@ const tools = [
           health_restrictions: { type: "string" },
           session_time: { type: "string" },
           split_preference: { type: "string" }
-        },
-        required: ["health_restrictions", "session_time", "split_preference"]
+        }
       }
     }
   }
@@ -120,9 +116,21 @@ export class GetAiCoachAdviceUseCase {
 
     if (toolName === "collect_training_data") {
       try {
-        const healthRestrictions = args.health_restrictions as string || "nenhuma"
-        const sessionTime = args.session_time as string || "60min"
-        const splitPreference = args.split_preference as string || "Push-Pull-Legs"
+        let healthRestrictions = args.health_restrictions as string || "nenhuma"
+        
+        // Normalize session_time to valid values
+        let sessionTime = args.session_time as string || "60min"
+        const validSessionTimes = ["30min", "45min", "60min", "mais de 1h"]
+        if (!validSessionTimes.includes(sessionTime)) {
+          sessionTime = "60min" // Default
+        }
+        
+        // Normalize split_preference to valid values
+        let splitPreference = args.split_preference as string || "Push-Pull-Legs"
+        const validSplits = ["Full Body", "Upper-Lower", "Push-Pull-Legs", "ABC", "ABCDE", "outra"]
+        if (!validSplits.includes(splitPreference)) {
+          splitPreference = "Push-Pull-Legs" // Default
+        }
 
         await prisma.$executeRaw`
           UPDATE "User"
@@ -144,9 +152,19 @@ export class GetAiCoachAdviceUseCase {
 
     if (toolName === "generate_training_program") {
       try {
-        const healthRestrictions = args.health_restrictions as string || "nenhuma"
-        const sessionTime = args.session_time as string || "60min"
-        const splitPreference = args.split_preference as string || "Push-Pull-Legs"
+        let healthRestrictions = args.health_restrictions as string || "nenhuma"
+        
+        let sessionTime = args.session_time as string || "60min"
+        const validSessionTimes = ["30min", "45min", "60min", "mais de 1h"]
+        if (!validSessionTimes.includes(sessionTime)) {
+          sessionTime = "60min"
+        }
+        
+        let splitPreference = args.split_preference as string || "Push-Pull-Legs"
+        const validSplits = ["Full Body", "Upper-Lower", "Push-Pull-Legs", "ABC", "ABCDE", "outra"]
+        if (!validSplits.includes(splitPreference)) {
+          splitPreference = "Push-Pull-Legs"
+        }
         
         await generateTrainingProgramAction(
           true,
