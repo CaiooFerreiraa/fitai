@@ -82,7 +82,7 @@ export class GetAiCoachAdviceUseCase {
     if (toolName === "generate_training_program") {
       try {
         await generateTrainingProgramAction(true) // Skip revalidation to prevent page refresh
-        return { success: true, message: "Cartilha de treino gerada! Acesse /programs para ver." }
+        return { success: true, message: "Cartilha criada com sucesso! Vai em CARTILHAS pra ver os treinos." }
       } catch (error) {
         console.error("GENERATE_PROGRAM_ERROR:", error)
         return { success: false, message: "Erro ao gerar cartilha." }
