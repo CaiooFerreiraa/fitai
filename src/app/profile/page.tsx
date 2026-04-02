@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { NumberInput } from "@/components/ui/number-input"
 import { Label } from "@/components/ui/label"
-import { ChevronLeft, Save, Activity, Target, Sparkles, Scale, Ruler, Settings, User, Home, Loader2 } from "lucide-react"
+import { ChevronLeft, Save, Activity, Target, Sparkles, Scale, Ruler, Settings, User, Home, Loader2, Calendar, Users, Dumbbell } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
@@ -180,6 +180,58 @@ export default function ProfilePage() {
                       placeholder="EX: ERRADICAÇÃO DE TECIDO ADIPOSO"
                       className="h-12 bg-black/50 border-2 border-black focus:border-[#ff0033] focus-visible:ring-0 text-sm md:text-base font-black uppercase rounded-xl md:rounded-2xl px-4 md:px-6 cursor-text italic transition-all"
                     />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-black/40 rounded-xl md:rounded-2xl border-2 border-black">
+                    <div className="space-y-2">
+                      <Label htmlFor="dateOfBirth" className="flex items-center gap-2 text-[9px] font-black text-neutral-600 uppercase tracking-[0.3em] italic">
+                        <Calendar className="w-3.5 h-3.5 text-[#ff0033] shrink-0" strokeWidth={4} />
+                        NASCIMENTO
+                      </Label>
+                      <Input
+                        id="dateOfBirth"
+                        name="dateOfBirth"
+                        type="date"
+                        defaultValue={profile.dateOfBirth ? new Date(profile.dateOfBirth).toISOString().split('T')[0] : ""}
+                        className="h-11 md:h-12 text-sm italic rounded-lg md:rounded-xl border-2 border-black bg-[#0a0a0b] focus:border-[#ff0033]"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="gender" className="flex items-center gap-2 text-[9px] font-black text-neutral-600 uppercase tracking-[0.3em] italic">
+                        <Users className="w-3.5 h-3.5 text-[#ff0033] shrink-0" strokeWidth={4} />
+                        SEXO
+                      </Label>
+                      <select
+                        id="gender"
+                        name="gender"
+                        defaultValue={profile.gender || ""}
+                        className="h-11 md:h-12 w-full bg-[#0a0a0b] border-2 border-black focus:border-[#ff0033] text-sm font-bold uppercase rounded-lg md:rounded-xl px-4 cursor-pointer italic"
+                      >
+                        <option value="">SELECIONE</option>
+                        <option value="masculino">MASCULINO</option>
+                        <option value="feminino">FEMININO</option>
+                        <option value="outro">OUTRO</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 group">
+                    <Label htmlFor="trainingTime" className="flex items-center gap-2 text-[9px] font-black text-neutral-600 uppercase tracking-[0.4em] group-focus-within:text-[#ff0033] transition-colors italic">
+                      <Dumbbell className="w-3.5 h-3.5 text-[#ff0033] shrink-0" strokeWidth={4} />
+                      TEMPO DE TREINO
+                    </Label>
+                    <select
+                      id="trainingTime"
+                      name="trainingTime"
+                      defaultValue={profile.trainingTime || ""}
+                      className="h-12 w-full bg-black/50 border-2 border-black focus:border-[#ff0033] text-sm font-bold uppercase rounded-xl md:rounded-2xl px-4 cursor-pointer italic"
+                    >
+                      <option value="">SELECIONE</option>
+                      <option value="sedentario">SEDENTÁRIO</option>
+                      <option value="menos_1_ano">MENOS DE 1 ANO</option>
+                      <option value="1_3_anos">1-3 ANOS</option>
+                      <option value="mais_3_anos">MAIS DE 3 ANOS</option>
+                    </select>
                   </div>
                 </div>
               </div>

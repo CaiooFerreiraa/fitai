@@ -15,9 +15,12 @@ export async function updateProfileAction(formData: FormData) {
   const heightStr = formData.get("height") as string
   const weightStr = formData.get("weight") as string
   const goal = formData.get("goal") as string
+  const dateOfBirthStr = formData.get("dateOfBirth") as string
+  const gender = formData.get("gender") as string
+  const trainingTime = formData.get("trainingTime") as string
 
   console.log("UPDATING PROFILE FOR USER ID:", session.user.id)
-  console.log("FORM DATA:", { name, email, phone, heightStr, weightStr, goal })
+  console.log("FORM DATA:", { name, email, phone, heightStr, weightStr, goal, dateOfBirthStr, gender, trainingTime })
 
   await prisma.user.update({
     where: { id: session.user.id },
@@ -28,6 +31,9 @@ export async function updateProfileAction(formData: FormData) {
       height: heightStr ? parseFloat(heightStr) : null,
       weight: weightStr ? parseFloat(weightStr) : null,
       goal,
+      dateOfBirth: dateOfBirthStr ? new Date(dateOfBirthStr) : null,
+      gender: gender || null,
+      trainingTime: trainingTime || null,
     }
   })
 
