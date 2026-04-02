@@ -7,14 +7,23 @@ import { revalidatePath } from "next/cache"
 
 const aiProgramUseCase = new GetAiTrainingProgramUseCase()
 
-export async function generateTrainingProgramAction(skipRevalidation: boolean = false) {
+export async function generateTrainingProgramAction(
+  skipRevalidation: boolean = false,
+  experienceLevel?: string,
+  trainingLocation?: string,
+  daysPerWeek?: number
+) {
   const session = await auth()
   if (!session?.user?.id) throw new Error("Unauthorized")
 
   const userId: string = session.user.id
 
   // Generate program via AI
-  const programStructure = await aiProgramUseCase.execute(userId)
+  const programStructure = await aiProgramUseCase.execute(userId, {
+    experienceLevel,
+    trainingLocation,
+    daysPerWeek
+  })
 
   // Save to database
   const program = await prisma.trainingProgram.create({
