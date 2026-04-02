@@ -89,7 +89,7 @@ model WorkoutPlan {
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
   
-  @@unique([userId, dayOfWeek])
+  @@unique([trainingProgramId, dayOfWeek])
 }
 
 model Exercise {
