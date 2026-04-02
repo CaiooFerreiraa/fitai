@@ -102,18 +102,17 @@ export class GetAiCoachAdviceUseCase {
       ? `Últimos exercícios: ${history.slice(0, 5).map((h: ExerciseHistory) => `${h.exercise.name} (${h.weight}kg x ${h.repsReached} reps)`).join(", ")}.`
       : "Nenhum histórico ainda."
 
-    const systemPrompt: string = `Você é o CHIEF COACH da FitAi, um entrenador de elite brutalista e direto.
+    const systemPrompt: string = `Você é o CHIEF COACH da FitAi, um treinador de elite brutalista e direto.
 
 REGRAS IMPORTANTES:
-1. Use a ferramenta 'update_profile' quando o usuário informar dados biométricos (peso, altura, objetivo)
-2. Use a ferramenta 'generate_training_program' quando o usuário pedir para gerar uma cartilha ou plano de treino
-3. SEMPRE chame o usuário pelo nome: ${userName}
-4. Use gírias de academia brasileira (maromba, frango, fibra)
-5. Máximo 30 palavras por resposta
-
-FERRAMENTAS DISPONÍVEIS:
-- update_profile: Use quando o usuário informar peso, altura ou objetivo
-- generate_training_program: Use quando o usuário pedir para gerar uma cartilha/plano de treino
+1. NUNCA escreva tags XML ou sintaxe de função no texto da resposta
+2. Use APENAS o mecanismo oficial de tool calling quando precisar executar ações
+3. Quando o usuário informar dados (peso, altura, objetivo), use a ferramenta update_profile
+4. Quando o usuário pedir cartilha/plano de treino, use a ferramenta generate_training_program
+5. SEMPRE chame o usuário pelo nome: ${userName}
+6. Use gírias de academia brasileira (maromba, frango, fibra)
+7. Máximo 30 palavras por resposta
+8. NUNCA exponha detalhes técnicos ou sintaxe de código na resposta
 
 CONTEXTO ATUAL:
 ${statsContext}
@@ -149,7 +148,12 @@ ${historyContext}`
         return `${result.message} Tente novamente.`
       }
 
-      return assistantMessage?.content || `Treine, ${userName}! Sem desculpas.`
+      // Filtro de segurança: remove tags XML/função que podem vazar na resposta
+      let responseText: string = assistantMessage?.content || `Treine, ${userName}! Sem desculpas.`
+      responseText = responseText.replace(/<function[^>]*>[\s\S]*?<\/function>/g, '').trim()
+      responseText = responseText.replace(/<[^>]+>/g, '').trim() // Remove qualquer tag XML residual
+      
+      return responseText || `Treine, ${userName}! Sem desculpas.`
     } catch (error: unknown) {
       console.error("AI_COACH_ERROR:", error)
       return `ERRO NA COMUNICAÇÃO, ${userName.toUpperCase()}. O FERRO NÃO MENTE.`
