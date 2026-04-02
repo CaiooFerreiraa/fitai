@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { listTrainingProgramsAction, setActiveProgramAction, deleteProgramAction, generateTrainingProgramAction } from "@/actions/program-actions"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, Loader2, Target, CheckCircle2, Trash2, Sparkles, Calendar, Dumbbell } from "lucide-react"
+import { ChevronLeft, Loader2, Target, CheckCircle2, Trash2, Sparkles, Calendar, Dumbbell, ChevronDown, ChevronUp, Clock, Hash } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
 
@@ -38,6 +38,7 @@ export default function ProgramsPage() {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
+  const [expandedPrograms, setExpandedPrograms] = useState<Set<string>>(new Set())
 
   async function loadPrograms() {
     setLoading(true)
@@ -92,6 +93,18 @@ export default function ProgramsPage() {
     } catch (error) {
       toast.error("ERRO AO DELETAR CARTILHA")
     }
+  }
+
+  function toggleExpand(programId: string) {
+    setExpandedPrograms(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(programId)) {
+        newSet.delete(programId)
+      } else {
+        newSet.add(programId)
+      }
+      return newSet
+    })
   }
 
   if (loading) {
@@ -209,6 +222,79 @@ export default function ProgramsPage() {
                       </span>
                     </div>
                   </div>
+
+                  {expandedPrograms.has(program.id) && (
+                    <div className="mt-4 space-y-3">
+                      {program.workoutPlans.map((workout) => (
+                        <div
+                          key={workout.id}
+                          className="bg-black/40 border border-white/5 rounded-xl p-4 space-y-3"
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h3 className="text-sm font-black uppercase italic text-white tracking-tight">
+                                {workout.dayOfWeek}
+                              </h3>
+                              {workout.name && (
+                                <p className="text-xs font-bold text-neutral-500 mt-0.5">
+                                  {workout.name}
+                                </p>
+                              )}
+                            </div>
+                            <span className="text-[9px] font-black uppercase text-neutral-600 italic">
+                              {workout.exercises.length} exercícios
+                            </span>
+                          </div>
+
+                          <div className="space-y-2">
+                            {workout.exercises.sort((a, b) => a.order - b.order).map((exercise) => (
+                              <div
+                                key={exercise.id}
+                                className="bg-black/40 border border-white/10 rounded-lg p-3 space-y-2"
+                              >
+                                <div className="flex items-start justify-between gap-2">
+                                  <span className="text-sm font-black text-white uppercase italic">
+                                    {exercise.name}
+                                  </span>
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                  <div className="flex items-center gap-1.5 bg-black/60 px-2 py-1 rounded border border-white/5">
+                                    <Hash className="w-3 h-3 text-[#ff0033]" />
+                                    <span className="text-[10px] font-black text-neutral-400 uppercase">
+                                      {exercise.sets}x{exercise.reps}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center gap-1.5 bg-black/60 px-2 py-1 rounded border border-white/5">
+                                    <Clock className="w-3 h-3 text-[#ff0033]" />
+                                    <span className="text-[10px] font-black text-neutral-400 uppercase">
+                                      {exercise.timer}s
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <Button
+                    onClick={() => toggleExpand(program.id)}
+                    className="w-full h-10 bg-black/40 hover:bg-black/60 text-white border border-white/10 rounded-xl font-black text-xs uppercase italic transition-all"
+                  >
+                    {expandedPrograms.has(program.id) ? (
+                      <>
+                        <ChevronUp className="w-4 h-4 mr-2" />
+                        OCULTAR EXERCÍCIOS
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown className="w-4 h-4 mr-2" />
+                        VER EXERCÍCIOS
+                      </>
+                    )}
+                  </Button>
 
                   <Button
                     onClick={() => handleSetActive(program.id)}

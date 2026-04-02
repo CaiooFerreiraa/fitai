@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache"
 
 const aiProgramUseCase = new GetAiTrainingProgramUseCase()
 
-export async function generateTrainingProgramAction() {
+export async function generateTrainingProgramAction(skipRevalidation: boolean = false) {
   const session = await auth()
   if (!session?.user?.id) throw new Error("Unauthorized")
 
@@ -50,8 +50,10 @@ export async function generateTrainingProgramAction() {
     }
   })
 
-  revalidatePath("/programs")
-  revalidatePath("/")
+  if (!skipRevalidation) {
+    revalidatePath("/programs")
+    revalidatePath("/")
+  }
   
   return { success: true, programId: program.id }
 }
