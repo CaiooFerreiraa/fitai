@@ -262,18 +262,29 @@ ${historyContext}
 - Idade: ${userStats.dateOfBirth ? "informada" : "não informada"}
 
 ## PROTOCOLO DE ANAMNESE (OBRIGATÓRIO PARA GERAR CARTILHA)
-Quando o usuário pedir para criar uma cartilha/plano de treino, você DEVE fazer estas perguntas:
+Quando o usuário pedir para criar uma cartilha/plano de treino, você DEVE:
 
-### PERGUNTA 1 - Restrições e Saúde
-"Você tem alguma lesão, dor crônica ou condição de saúde que devo saber? (problemas de coluna, joelho, ombro, etc)"
+### PASSO 1: Fazer as 3 perguntas
+1. Restrições de Saúde: "Você tem alguma lesão, dor crônica ou condição de saúde que devo saber?"
+2. Tempo por Sessão: "Quanto tempo você tem disponível por sessão?"
+3. Preferência de Divisão: "Qual tipo de divisão você prefere?"
 
-### PERGUNTA 2 - Disponibilidade
-"Quanto tempo você tem disponível por sessão? (30min / 45min / 60min / mais de 1h)"
+### PASSO 2: Coletar as respostas
+Aguarde as 3 respostas do usuário.
 
-### PERGUNTA 3 - Preferência de Divisão
-"Qual tipo de divisão você prefere? (Full Body / Upper-Lower / Push-Pull-Legs / ABC / outra)"
+### PASSO 3: Chamar collect_training_data
+Após receber as 3 respostas, chame a ferramenta collect_training_data com os dados coletados.
 
-Colete as 3 respostas ANTES de gerar a cartilha. Use collect_training_data para salvar.
+### PASSO 4: Chamar generate_training_program
+IMEDIATAMENTE após collect_training_data, chame generate_training_program para CRIAR A CARTILHA!
+NÃO espere o usuário pedir novamente - gere a cartilha automaticamente!
+
+### FLUXO COMPLETO (SIGA ESTA ORDEM):
+1. Faça as 3 perguntas (uma por vez)
+2. Aguarde as respostas
+3. Assim que tiver as 3 respostas → chame collect_training_data
+4. IMEDIATAMENTE após → chame generate_training_program (NÃO ESPERE!)
+5. A cartilha será criada e salva automaticamente
 
 ## FERRAMENTAS DISPONÍVEIS (USE APENAS VIA TOOL CALLING)
 - **update_profile**: Atualiza peso, altura, objetivo (NUNCA escreva no texto!)
@@ -327,17 +338,24 @@ Colete as 3 respostas ANTES de gerar a cartilha. Use collect_training_data para 
 
       const assistantMessage = completion.choices[0]?.message
 
+      // Handle multiple tool calls in sequence
       if (assistantMessage?.tool_calls && assistantMessage.tool_calls.length > 0) {
-        const toolCall = assistantMessage.tool_calls[0]
-        const toolName = toolCall.function.name
-        const args = JSON.parse(toolCall.function.arguments || "{}")
-
-        const result = await this.handleToolCall(toolName, args)
-
-        if (result.success) {
-          return `${result.message}`
+        let finalMessage = ""
+        
+        for (const toolCall of assistantMessage.tool_calls) {
+          const toolName = toolCall.function.name
+          const args = JSON.parse(toolCall.function.arguments || "{}")
+          
+          const result = await this.handleToolCall(toolName, args)
+          
+          if (result.success) {
+            finalMessage = result.message
+          } else {
+            return `${result.message}`
+          }
         }
-        return `${result.message}`
+        
+        return `${finalMessage}`
       }
 
       // Filtro de segurança: remove tags XML/função que podem vazar na resposta
