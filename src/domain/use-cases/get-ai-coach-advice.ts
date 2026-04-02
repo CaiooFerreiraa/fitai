@@ -61,10 +61,8 @@ const tools = [
             enum: ["academia", "casa_equipamentos", "casa_sem_equipamentos"]
           },
           days_per_week: { 
-            type: "number", 
-            description: "Dias disponíveis por semana (3-6)",
-            minimum: 3,
-            maximum: 6
+            type: "string", 
+            description: "Dias disponíveis por semana (ex: 3, 4, 5, 6)"
           }
         },
         required: ["experience_level", "training_location", "days_per_week"]
@@ -81,7 +79,7 @@ const tools = [
         properties: {
           experience_level: { type: "string" },
           training_location: { type: "string" },
-          days_per_week: { type: "number" }
+          days_per_week: { type: "string" }
         },
         required: ["experience_level", "training_location", "days_per_week"]
       }
@@ -132,7 +130,7 @@ export class GetAiCoachAdviceUseCase {
 
         const experience: string = experienceMap[args.experience_level as string] || args.experience_level as string
         const location: string = locationMap[args.training_location as string] || args.training_location as string
-        const days: number = args.days_per_week as number
+        const days: number = parseInt(args.days_per_week as string, 10)
 
         // Atualiza o goal com informações completas
         await prisma.$executeRaw`
@@ -160,7 +158,7 @@ export class GetAiCoachAdviceUseCase {
           true, // skipRevalidation
           args.experience_level as string,
           args.training_location as string,
-          args.days_per_week as number
+          parseInt(args.days_per_week as string, 10)
         )
         return { success: true, message: "Cartilha criada com sucesso! Vai em CARTILHAS pra ver os treinos." }
       } catch (error) {

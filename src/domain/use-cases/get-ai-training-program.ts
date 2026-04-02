@@ -71,7 +71,9 @@ export class GetAiTrainingProgramUseCase {
     // Extract training parameters
     const experienceLevel: string = options?.experienceLevel || user?.trainingTime || "intermediário"
     const trainingLocation: string = options?.trainingLocation || "academia"
-    const daysPerWeek: number = options?.daysPerWeek || 5
+    const daysPerWeek: number = typeof options?.daysPerWeek === 'string' 
+      ? parseInt(options.daysPerWeek, 10) 
+      : (options?.daysPerWeek || 5)
     const gender: string = user?.gender || options?.gender || "masculino"
 
     const biometryContext: string = userWeight && userHeight 
