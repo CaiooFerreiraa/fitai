@@ -46,26 +46,26 @@ const tools = [
     type: "function" as const,
     function: {
       name: "collect_training_data",
-      description: "Salva informações sobre experiência, local de treino e frequência ANTES de gerar cartilha. Use isso quando o usuário responder às perguntas sobre nível, local e dias disponíveis.",
+      description: "Salva dados da anamnese completa (restrições de saúde, tempo por sessão, preferência de divisão). Use após coletar as 3 respostas.",
       parameters: {
         type: "object",
         properties: {
-          experience_level: { 
+          health_restrictions: { 
             type: "string", 
-            description: "Nível de experiência: iniciante, intermediário ou avançado",
-            enum: ["iniciante", "intermediário", "avançado"]
+            description: "Restrições de saúde ou lesões (ex: dor na coluna, problema no joelho, Shoulder pain, nenhuma)"
           },
-          training_location: { 
+          session_time: { 
             type: "string", 
-            description: "Local de treino: academia, casa_equipamentos, casa_sem_equipamentos",
-            enum: ["academia", "casa_equipamentos", "casa_sem_equipamentos"]
+            description: "Tempo disponível por sessão",
+            enum: ["30min", "45min", "60min", "mais de 1h"]
           },
-          days_per_week: { 
+          split_preference: { 
             type: "string", 
-            description: "Dias disponíveis por semana (ex: 3, 4, 5, 6)"
+            description: "Preferência de divisão do treino",
+            enum: ["Full Body", "Upper-Lower", "Push-Pull-Legs", "ABC", "ABCDE", "outra"]
           }
         },
-        required: ["experience_level", "training_location", "days_per_week"]
+        required: ["health_restrictions", "session_time", "split_preference"]
       }
     }
   },
@@ -73,15 +73,15 @@ const tools = [
     type: "function" as const,
     function: {
       name: "generate_training_program",
-      description: "Gera cartilha de treino APENAS após coletar: objetivo, nível, local e frequência. NÃO use antes de ter todas as informações.",
+      description: "Gera cartilha de treino APENAS após coletar a anamnese completa (3 perguntas). NÃO use antes!",
       parameters: {
         type: "object",
         properties: {
-          experience_level: { type: "string" },
-          training_location: { type: "string" },
-          days_per_week: { type: "string" }
+          health_restrictions: { type: "string" },
+          session_time: { type: "string" },
+          split_preference: { type: "string" }
         },
-        required: ["experience_level", "training_location", "days_per_week"]
+        required: ["health_restrictions", "session_time", "split_preference"]
       }
     }
   }
@@ -120,36 +120,22 @@ export class GetAiCoachAdviceUseCase {
 
     if (toolName === "collect_training_data") {
       try {
-        // Salva dados de treino temporariamente no perfil do usuário
-        const experienceMap: Record<string, string> = {
-          "iniciante": "Iniciante (menos de 1 ano)",
-          "intermediário": "Intermediário (1-3 anos)",
-          "avançado": "Avançado (3+ anos)"
-        }
-        
-        const locationMap: Record<string, string> = {
-          "academia": "Academia completa",
-          "casa_equipamentos": "Casa com equipamentos",
-          "casa_sem_equipamentos": "Casa sem equipamentos"
-        }
+        const healthRestrictions = args.health_restrictions as string || "nenhuma"
+        const sessionTime = args.session_time as string || "60min"
+        const splitPreference = args.split_preference as string || "Push-Pull-Legs"
 
-        const experience: string = experienceMap[args.experience_level as string] || args.experience_level as string
-        const location: string = locationMap[args.training_location as string] || args.training_location as string
-        const days: number = parseInt(args.days_per_week as string, 10)
-
-        // Atualiza o goal com informações completas
         await prisma.$executeRaw`
           UPDATE "User"
           SET goal = CONCAT(
             COALESCE(goal, 'evolução geral'),
-            ' | Nível: ', ${experience},
-            ' | Local: ', ${location},
-            ' | Frequência: ', ${days}::text, ' dias/semana'
+            ' | Saúde: ', ${healthRestrictions},
+            ' | Tempo: ', ${sessionTime},
+            ' | Divisão: ', ${splitPreference}
           )
           WHERE id = ${this.userId}
         `
         
-        return { success: true, message: `Dados coletados! Nível ${experience}, treino em ${location}, ${days}x/semana. Preparando sua cartilha...` }
+        return { success: true, message: `Anamnese coletada! Saúde: ${healthRestrictions}, Tempo: ${sessionTime}, Divisão: ${splitPreference}. Vou preparar sua cartilha agora!` }
       } catch (error) {
         console.error("COLLECT_TRAINING_DATA_ERROR:", error)
         return { success: false, message: "Erro ao salvar dados de treino." }
@@ -158,16 +144,15 @@ export class GetAiCoachAdviceUseCase {
 
     if (toolName === "generate_training_program") {
       try {
-        // Se o usuário já tem trainingTime no perfil, usa diretamente
-        const experienceLevel = args.experience_level || this.userStats?.trainingTime || "intermediário"
-        const trainingLocation = args.training_location || "academia"
-        const daysPerWeek = parseInt((args.days_per_week as string) || "4", 10)
+        const healthRestrictions = args.health_restrictions as string || "nenhuma"
+        const sessionTime = args.session_time as string || "60min"
+        const splitPreference = args.split_preference as string || "Push-Pull-Legs"
         
         await generateTrainingProgramAction(
-          true, // skipRevalidation
-          experienceLevel as string,
-          trainingLocation as string,
-          daysPerWeek
+          true,
+          this.userStats?.trainingTime || "intermediário",
+          "academia",
+          4
         )
         return { success: true, message: "Cartilha criada com sucesso! Vai em CARTILHAS pra ver os treinos." }
       } catch (error) {
@@ -246,21 +231,32 @@ Você pensa como um profissional experiente: avalia, planeja e ajusta com precis
 ${statsContext}
 ${historyContext}
 
-## DADOS JÁ DISPONÍVEIS NO PERFIL
-- **Nível de experiência**: ${userStats.trainingTime ? `JÁ EXISTE NO PERFIL: ${userStats.trainingTime} - NÃO PERGUNTE NOVAMEMENTE, USE DIRETO` : "Precisa coletar"}
-- **Local de treino**: Use 'academia' como padrão se não souber
-- **Frequência**: Use 4 dias/semana como padrão se não souber
+## DADOS DO PERFIL (INFORMAÇÕES BÁSICAS)
+- Peso: ${userStats.weight || "não informado"} kg
+- Altura: ${userStats.height || "não informada"} m
+- Objetivo: ${userStats.goal || "não informado"}
+- Experiência: ${userStats.trainingTime || "não informada"}
+- Gênero: ${userStats.gender || "não informado"}
+- Idade: ${userStats.dateOfBirth ? "informada" : "não informada"}
 
-## 🚨 REGRA CRÍTICA: NÃO COLECTE DADOS JÁ EXISTENTES
-Se o usuário já tem 'trainingTime' no perfil (iniciante, intermediário, avançado, etc), 
-NUNCA chame collect_training_data!
-Use os dados existentes diretamente para gerar a cartilha.
+## PROTOCOLO DE ANAMNESE (OBRIGATÓRIO PARA GERAR CARTILHA)
+Quando o usuário pedir para criar uma cartilha/plano de treino, você DEVE fazer estas perguntas:
 
-Apenas use collect_training_data se o trainingTime do perfil estiver vazio/null.
+### PERGUNTA 1 - Restrições e Saúde
+"Você tem alguma lesão, dor crônica ou condição de saúde que devo saber? (problemas de coluna, joelho, ombro, etc)"
 
-## PROTOCOLO DE AVALIAÇÃO
-Se trainingTime existe → gere a cartilha diretamente (chame generate_training_program)
-Se trainingTime NÃO existe → pergunte nível, local e frequência
+### PERGUNTA 2 - Disponibilidade
+"Quanto tempo você tem disponível por sessão? (30min / 45min / 60min / mais de 1h)"
+
+### PERGUNTA 3 - Preferência de Divisão
+"Qual tipo de divisão você prefere? (Full Body / Upper-Lower / Push-Pull-Legs / ABC / outra)"
+
+Colete as 3 respostas ANTES de gerar a cartilha. Use collect_training_data para salvar.
+
+## FERRAMENTAS DISPONÍVEIS
+- **update_profile**: Atualiza peso, altura, objetivo
+- **collect_training_data**: Salva dados de treino (experiência, local, frequência)
+- **generate_training_program**: Gera cartilha APÓS coletar anamnese completa
 
 ## REGRAS DE COMUNICAÇÃO
 1. Tom profissional mas acessível - use termos técnicos com explicações
@@ -271,7 +267,7 @@ Se trainingTime NÃO existe → pergunte nível, local e frequência
 6. Se dor ou desconforto mencionado, trate com seriedade e recomende avaliação
 
 ## O QUE VOCÊ NÃO FAZ
-- Não gera treino sem anamnese mínima
+- Não gera treino sem anamnese completa (perguntas de saúde, tempo, preferência)
 - Não prescreve suplementos específicos (encaminhe ao nutricionista)
 - Não diagnostica lesões (encaminhe ao médico/fisioterapeuta)
 - Não usa volume inadequado para o nível do atleta`
