@@ -1,13 +1,13 @@
 "use client"
 
-import { useState } from "react"
-import { Exercise, DayOfWeek, DAYS_OF_WEEK } from "@/domain/entities/workout"
+import { useState, useEffect } from "react"
+import { Exercise, DayOfWeek, DAYS_OF_WEEK, DAY_LABELS_PT } from "@/domain/entities/workout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { NumberInput } from "@/components/ui/number-input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { saveWorkoutPlanAction } from "@/actions/config-actions"
+import { saveWorkoutPlanAction, getMyWorkoutPlans } from "@/actions/config-actions"
 import { toast } from "sonner"
 import {
   Plus, Trash2, Save, Loader2, Dumbbell, Activity,
@@ -19,6 +19,7 @@ export default function ConfigPage() {
   const [dayOfWeek, setDayOfWeek] = useState<DayOfWeek>("MONDAY")
   const [exercises, setExercises] = useState<Exercise[]>([])
   const [loading, setLoading] = useState(false)
+  const [loadingDay, setLoadingDay] = useState(false)
 
   const addExercise = () => {
     setExercises([...exercises, { name: "", sets: 3, reps: 10, timer: 60, order: exercises.length }])
@@ -33,6 +34,27 @@ export default function ConfigPage() {
   const removeExercise = (idx: number) => {
     setExercises(exercises.filter((_, i) => i !== idx))
   }
+
+  // Carregar treino existente quando mudar o dia
+  useEffect(() => {
+    async function loadDayWorkout() {
+      setLoadingDay(true)
+      try {
+        const plans = await getMyWorkoutPlans()
+        const existingPlan = plans.find(p => p.dayOfWeek === dayOfWeek)
+        if (existingPlan && existingPlan.exercises.length > 0) {
+          setExercises(existingPlan.exercises)
+        } else {
+          setExercises([])
+        }
+      } catch (error) {
+        console.error("Erro ao carregar treino:", error)
+      } finally {
+        setLoadingDay(false)
+      }
+    }
+    loadDayWorkout()
+  }, [dayOfWeek])
 
   const handleSave = async () => {
     if (exercises.length === 0) {
@@ -101,10 +123,10 @@ export default function ConfigPage() {
           </div>
 
           {/* Day Selector */}
-          <div className="w-full lg:max-w-sm bg-[#121214] border-4 border-black p-5 rounded-2xl shadow-[6px_6px_0_0_#000] relative overflow-hidden">
+          <div className="w-full lg:max-w-sm bg-[#121214] border-4 border-black p-4 sm:p-5 rounded-2xl shadow-[6px_6px_0_0_#000] relative overflow-hidden">
             <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-neutral-600 block mb-3 italic">JANELA DE EXECUÇÃO TÁTICA</Label>
             <Select value={dayOfWeek} onValueChange={(val: DayOfWeek) => setDayOfWeek(val)}>
-              <SelectTrigger className="h-14 bg-black/60 border-2 border-[#1c1c1f] focus:border-[#ff0033] focus:ring-0 text-base font-black uppercase tracking-tight rounded-xl cursor-pointer px-5 italic transition-all">
+              <SelectTrigger className="h-12 sm:h-14 bg-black/60 border-2 border-[#1c1c1f] focus:border-[#ff0033] focus:ring-0 text-sm sm:text-base font-black uppercase tracking-tight rounded-xl cursor-pointer px-4 sm:px-5 italic transition-all">
                 <SelectValue placeholder="Selecione o dia" />
               </SelectTrigger>
               <SelectContent className="bg-[#1c1c1f] border-4 border-black text-white rounded-xl overflow-hidden">
@@ -114,7 +136,7 @@ export default function ConfigPage() {
                     value={day}
                     className="focus:bg-[#ff0033] focus:text-white uppercase tracking-tighter font-black cursor-pointer py-2.5 text-sm italic"
                   >
-                    {day}
+                    {DAY_LABELS_PT[day]}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -141,7 +163,11 @@ export default function ConfigPage() {
             </div>
 
             {/* List */}
-            {exercises.length === 0 ? (
+            {loadingDay ? (
+              <div className="bg-[#121214] border-4 border-dashed border-[#1c1c1f] rounded-3xl p-10 md:p-14 text-center">
+                <Loader2 className="w-8 h-8 text-[#ff0033] animate-spin mx-auto" />
+              </div>
+            ) : exercises.length === 0 ? (
               <div className="bg-[#121214] border-4 border-dashed border-[#1c1c1f] rounded-3xl p-10 md:p-14 text-center group hover:border-[#ff0033]/20 transition-all relative overflow-hidden">
                 <div className="bg-black/60 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform border-4 border-black shadow-[6px_6px_0_0_#000]">
                   <Dumbbell className="w-8 h-8 text-neutral-800" strokeWidth={4} />
@@ -156,10 +182,10 @@ export default function ConfigPage() {
                 {exercises.map((ex, idx) => (
                   <div
                     key={idx}
-                    className="bg-[#121214] border-4 border-black rounded-3xl p-5 sm:p-7 hover:border-[#ff0033]/20 transition-all shadow-[6px_6px_0_0_#000] group/card animate-in fade-in slide-in-from-top-4 duration-500"
+                    className="bg-[#121214] border-4 border-black rounded-2xl sm:rounded-3xl p-4 sm:p-7 hover:border-[#ff0033]/20 transition-all shadow-[6px_6px_0_0_#000] group/card animate-in fade-in slide-in-from-top-4 duration-500"
                   >
-                    <div className="flex items-start gap-3 md:gap-4 mb-5">
-                      <div className="bg-[#ff0033] text-white w-10 h-10 rounded-xl flex items-center justify-center text-xl font-black italic shrink-0 shadow-[4px_4px_0_0_#000] border-4 border-black">
+                    <div className="flex items-start gap-2 sm:gap-4 mb-4 sm:mb-5">
+                      <div className="bg-[#ff0033] text-white w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-lg sm:text-xl font-black italic shrink-0 shadow-[4px_4px_0_0_#000] border-4 border-black">
                         {idx + 1}
                       </div>
                       <div className="flex-1 space-y-2">
@@ -168,35 +194,35 @@ export default function ConfigPage() {
                           placeholder="EX: SUPINO RETO"
                           value={ex.name}
                           onChange={(e) => updateExercise(idx, { name: e.target.value })}
-                          className="h-12 bg-black/50 border-4 border-black focus:border-[#ff0033] focus-visible:ring-0 text-base font-black uppercase tracking-tight rounded-xl px-4 italic transition-all"
+                          className="h-10 sm:h-12 bg-black/50 border-4 border-black focus:border-[#ff0033] focus-visible:ring-0 text-sm sm:text-base font-black uppercase tracking-tight rounded-xl px-3 sm:px-4 italic transition-all"
                         />
                       </div>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => removeExercise(idx)}
-                        className="w-10 h-10 mt-6 shrink-0 bg-[#0a0a0b] text-neutral-800 hover:text-[#ff0033] border-4 border-black rounded-xl transition-all shadow-[4px_4px_0_0_#000]"
+                        className="w-8 h-8 sm:w-10 sm:h-10 mt-6 shrink-0 bg-[#0a0a0b] text-neutral-800 hover:text-[#ff0033] border-4 border-black rounded-xl transition-all shadow-[4px_4px_0_0_#000]"
                       >
-                        <Trash2 size={16} strokeWidth={4} />
+                        <Trash2 size={14} className="sm:w-4 sm:h-4" strokeWidth={4} />
                       </Button>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-3 md:gap-5 pt-4 border-t-2 border-black/50">
+                    <div className="grid grid-cols-3 gap-2 sm:gap-5 pt-3 sm:pt-4 border-t-2 border-black/50">
                       {[
-                        { label: "SÉRIES", icon: <Target size={12}/>, value: ex.sets, onChange: (val: number) => updateExercise(idx, { sets: val }), min: 1 },
-                        { label: "REPS", icon: <Activity size={12}/>, value: ex.reps, onChange: (val: number) => updateExercise(idx, { reps: val }), min: 1 },
-                        { label: "DESC. (S)", icon: <Clock size={12}/>, value: ex.timer, onChange: (val: number) => updateExercise(idx, { timer: val }), step: 5, min: 0 },
+                        { label: "SÉRIES", icon: <Target size={10} className="sm:w-3 sm:h-3"/>, value: ex.sets, onChange: (val: number) => updateExercise(idx, { sets: val }), min: 1 },
+                        { label: "REPS", icon: <Activity size={10} className="sm:w-3 sm:h-3"/>, value: ex.reps, onChange: (val: number) => updateExercise(idx, { reps: val }), min: 1 },
+                        { label: "DESC. (S)", icon: <Clock size={10} className="sm:w-3 sm:h-3"/>, value: ex.timer, onChange: (val: number) => updateExercise(idx, { timer: val }), step: 5, min: 0 },
                       ].map((param) => (
-                        <div key={param.label} className="space-y-1.5">
-                          <Label className="text-[8px] font-black uppercase tracking-widest text-[#ff0033] flex items-center gap-1 italic">
-                            {param.icon} {param.label}
+                        <div key={param.label} className="space-y-1 sm:space-y-1.5">
+                          <Label className="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-[#ff0033] flex items-center gap-1 italic">
+                            {param.icon} <span className="hidden xs:inline">{param.label}</span>
                           </Label>
                           <NumberInput
                             value={param.value}
                             onChange={param.onChange}
                             min={param.min}
                             step={param.step}
-                            className="h-10 text-xl italic rounded-xl border-2 border-black bg-black/40 focus:border-[#ff0033] transition-all"
+                            className="h-9 sm:h-10 text-lg sm:text-xl italic rounded-xl border-2 border-black bg-black/40 focus:border-[#ff0033] transition-all"
                           />
                         </div>
                       ))}

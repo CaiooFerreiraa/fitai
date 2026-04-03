@@ -95,10 +95,46 @@ export async function setActiveProgramAction(programId: string) {
     where: {
       id: programId,
       userId: session.user.id
+    },
+    include: {
+      workoutPlans: {
+        include: {
+          exercises: true
+        }
+      }
     }
   })
 
   if (!program) throw new Error("Program not found")
+
+  // Deletar todos os treinos antigos do usuário (que não pertencem a programas)
+  await prisma.workoutPlan.deleteMany({
+    where: {
+      userId: session.user.id,
+      trainingProgramId: null
+    }
+  })
+
+  // Criar cópias dos treinos da cartilha ativa como treinos standalone
+  for (const workoutPlan of program.workoutPlans) {
+    await prisma.workoutPlan.create({
+      data: {
+        userId: session.user.id,
+        dayOfWeek: workoutPlan.dayOfWeek,
+        name: workoutPlan.name,
+        trainingProgramId: null, // Treinos standalone não estão linkados a programas
+        exercises: {
+          create: workoutPlan.exercises.map(ex => ({
+            name: ex.name,
+            sets: ex.sets,
+            reps: ex.reps,
+            timer: ex.timer,
+            order: ex.order
+          }))
+        }
+      }
+    })
+  }
 
   // Update user's active program
   await prisma.user.update({
@@ -108,6 +144,7 @@ export async function setActiveProgramAction(programId: string) {
 
   revalidatePath("/programs")
   revalidatePath("/")
+  revalidatePath("/config")
   
   return { success: true }
 }

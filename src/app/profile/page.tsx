@@ -85,62 +85,63 @@ export default function ProfilePage() {
       <div className="bg-watermark text-[10rem] opacity-[0.02]" aria-hidden>BIO-ID</div>
 
       <header className="relative z-20 sticky top-0 bg-[#0a0a0b]/90 backdrop-blur-2xl border-b-2 border-black shadow-[0_5px_20px_rgba(0,0,0,0.8)]">
-        <div className="max-w-6xl mx-auto px-4 md:px-8 h-14 md:h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group cursor-pointer">
-            <ChevronLeft className="w-4 h-4 text-neutral-600 group-hover:text-[#ff0033] group-hover:-translate-x-1 transition-all" strokeWidth={3} />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] italic text-neutral-500 group-hover:text-white transition-colors">VOLTAR À BASE</span>
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-8 h-12 sm:h-14 md:h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer">
+            <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-neutral-600 group-hover:text-[#ff0033] group-hover:-translate-x-1 transition-all" strokeWidth={3} />
+            <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] italic text-neutral-500 group-hover:text-white transition-colors">VOLTAR À BASE</span>
           </Link>
-          <div className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#ff0033] animate-ping" />
-            <span className="text-[9px] font-black text-[#ff0033] uppercase tracking-[0.3em] italic">REGISTRO BIOMÉTRICO</span>
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-[#ff0033] animate-ping" />
+            <span className="text-[8px] sm:text-[9px] font-black text-[#ff0033] uppercase tracking-[0.3em] italic hidden xs:inline">REGISTRO BIOMÉTRICO</span>
+            <span className="text-[8px] sm:text-[9px] font-black text-[#ff0033] uppercase tracking-[0.3em] italic xs:hidden">BIO-ID</span>
           </div>
         </div>
       </header>
 
-      <main className="relative z-10 max-w-6xl mx-auto px-4 md:px-8 pt-6 md:pt-10 pb-32 lg:pb-12">
+      <main className="relative z-10 max-w-6xl mx-auto px-3 sm:px-4 md:px-8 pt-4 sm:pt-6 md:pt-10 pb-28 sm:pb-32 lg:pb-12">
 
-        <div className="mb-6 md:mb-8">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black uppercase tracking-tighter italic leading-none text-white">
+        <div className="mb-4 sm:mb-6 md:mb-8">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-black uppercase tracking-tighter italic leading-none text-white">
             FICHA<br />
             <span className="text-[#ff0033]">TÁTICA.</span>
           </h1>
-          <p className="text-[9px] font-black text-neutral-600 uppercase tracking-[0.4em] italic mt-1.5">
+          <p className="text-[8px] sm:text-[9px] font-black text-neutral-600 uppercase tracking-[0.4em] italic mt-1 sm:mt-1.5">
             STATUS: <span className="text-[#ff0033]">{bmiStatus}</span>
           </p>
         </div>
 
         <form action={handleAction}>
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 sm:gap-6 items-start">
 
-            <div className="lg:col-span-3 space-y-4 md:space-y-6">
-              <div className="bg-[#121214] border-2 md:border-4 border-black rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-8 lg:p-10 shadow-[8px_8px_0_0_#000] md:shadow-[12px_12px_0_0_#000] relative overflow-hidden">
+            <div className="lg:col-span-3 space-y-3 sm:space-y-4 md:space-y-6">
+              <div className="bg-[#121214] border-2 md:border-4 border-black rounded-xl sm:rounded-[1.5rem] md:rounded-[2rem] p-4 sm:p-5 md:p-8 lg:p-10 shadow-[6px_6px_0_0_#000] md:shadow-[12px_12px_0_0_#000] relative overflow-hidden">
                 <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-[#ff0033] to-transparent opacity-30" />
                 
-                <div className="flex items-center gap-3 pb-4 border-b-2 border-black mb-6">
-                  <div className="bg-[#ff0033]/10 p-2 rounded-xl border border-[#ff0033]/20">
-                    <Target className="w-4 h-4 text-[#ff0033]" strokeWidth={4} />
+                <div className="flex items-center gap-2 sm:gap-3 pb-3 sm:pb-4 border-b-2 border-black mb-4 sm:mb-6">
+                  <div className="bg-[#ff0033]/10 p-1.5 sm:p-2 rounded-lg sm:rounded-xl border border-[#ff0033]/20">
+                    <Target className="w-3 h-3 sm:w-4 sm:h-4 text-[#ff0033]" strokeWidth={4} />
                   </div>
-                  <h2 className="text-[10px] font-black uppercase tracking-[0.3em] italic text-neutral-500">IDENTIFICAÇÃO DE COMBATENTE</h2>
+                  <h2 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] italic text-neutral-500">IDENTIFICAÇÃO DE COMBATENTE</h2>
                 </div>
 
-                <div className="space-y-5">
-                  <div className="space-y-2 group">
-                    <Label htmlFor="name" className="flex items-center gap-2 text-[9px] font-black text-neutral-600 uppercase tracking-[0.4em] group-focus-within:text-[#ff0033] transition-colors italic">
-                      <div className="w-1 h-1 rounded-full bg-[#ff0033]" />
+                <div className="space-y-4 sm:space-y-5">
+                  <div className="space-y-1.5 sm:space-y-2 group">
+                    <Label htmlFor="name" className="flex items-center gap-1.5 sm:gap-2 text-[8px] sm:text-[9px] font-black text-neutral-600 uppercase tracking-[0.4em] group-focus-within:text-[#ff0033] transition-colors italic">
+                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full bg-[#ff0033]" />
                       CODINOME DE ALTA PRIORIDADE
                     </Label>
                     <Input
                       id="name"
                       name="name"
                       defaultValue={profile.name || ""}
-                      className="h-12 md:h-14 bg-black/50 border-2 border-black focus:border-[#ff0033] focus-visible:ring-0 text-xl md:text-2xl font-black uppercase tracking-tight rounded-xl md:rounded-2xl px-4 md:px-6 cursor-text italic transition-all"
+                      className="h-11 sm:h-12 md:h-14 bg-black/50 border-2 border-black focus:border-[#ff0033] focus-visible:ring-0 text-lg sm:text-xl md:text-2xl font-black uppercase tracking-tight rounded-lg sm:rounded-xl md:rounded-2xl px-3 sm:px-4 md:px-6 cursor-text italic transition-all"
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-black/40 rounded-xl md:rounded-2xl border-2 border-black">
-                    <div className="space-y-2">
-                      <Label htmlFor="weight" className="flex items-center gap-2 text-[9px] font-black text-neutral-600 uppercase tracking-[0.3em] italic">
-                        <Scale className="w-3.5 h-3.5 text-[#ff0033] shrink-0" strokeWidth={4} />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 p-3 sm:p-4 bg-black/40 rounded-lg sm:rounded-xl md:rounded-2xl border-2 border-black">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="weight" className="flex items-center gap-1.5 sm:gap-2 text-[8px] sm:text-[9px] font-black text-neutral-600 uppercase tracking-[0.3em] italic">
+                        <Scale className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#ff0033] shrink-0" strokeWidth={4} />
                         MASSA (KG)
                       </Label>
                       <NumberInput
@@ -149,12 +150,12 @@ export default function ProfilePage() {
                         step={0.1}
                         defaultValue={profile.weight || ""}
                         placeholder="70.5"
-                        className="h-11 md:h-12 text-xl italic rounded-lg md:rounded-xl border-2 border-black bg-[#0a0a0b] focus:border-[#ff0033]"
+                        className="h-10 sm:h-11 md:h-12 text-lg sm:text-xl italic rounded-lg md:rounded-xl border-2 border-black bg-[#0a0a0b] focus:border-[#ff0033]"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="height" className="flex items-center gap-2 text-[9px] font-black text-neutral-600 uppercase tracking-[0.3em] italic">
-                        <Ruler className="w-3.5 h-3.5 text-[#ff0033] shrink-0" strokeWidth={4} />
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="height" className="flex items-center gap-1.5 sm:gap-2 text-[8px] sm:text-[9px] font-black text-neutral-600 uppercase tracking-[0.3em] italic">
+                        <Ruler className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#ff0033] shrink-0" strokeWidth={4} />
                         ALTURA (M)
                       </Label>
                       <NumberInput
@@ -163,14 +164,14 @@ export default function ProfilePage() {
                         step={0.01}
                         defaultValue={profile.height || ""}
                         placeholder="1.75"
-                        className="h-11 md:h-12 text-xl italic rounded-lg md:rounded-xl border-2 border-black bg-[#0a0a0b] focus:border-[#ff0033]"
+                        className="h-10 sm:h-11 md:h-12 text-lg sm:text-xl italic rounded-lg md:rounded-xl border-2 border-black bg-[#0a0a0b] focus:border-[#ff0033]"
                       />
                     </div>
                   </div>
 
-                  <div className="space-y-2 group">
-                    <Label htmlFor="goal" className="flex items-center gap-2 text-[9px] font-black text-neutral-600 uppercase tracking-[0.4em] group-focus-within:text-[#ff0033] transition-colors italic">
-                      <div className="w-1 h-1 rounded-full bg-[#ff0033]" />
+                  <div className="space-y-1.5 sm:space-y-2 group">
+                    <Label htmlFor="goal" className="flex items-center gap-1.5 sm:gap-2 text-[8px] sm:text-[9px] font-black text-neutral-600 uppercase tracking-[0.4em] group-focus-within:text-[#ff0033] transition-colors italic">
+                      <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full bg-[#ff0033]" />
                       OBJETIVO TÁTICO PRIMÁRIO
                     </Label>
                     <Input
@@ -178,14 +179,14 @@ export default function ProfilePage() {
                       name="goal"
                       defaultValue={profile.goal || ""}
                       placeholder="EX: ERRADICAÇÃO DE TECIDO ADIPOSO"
-                      className="h-12 bg-black/50 border-2 border-black focus:border-[#ff0033] focus-visible:ring-0 text-sm md:text-base font-black uppercase rounded-xl md:rounded-2xl px-4 md:px-6 cursor-text italic transition-all"
+                      className="h-11 sm:h-12 bg-black/50 border-2 border-black focus:border-[#ff0033] focus-visible:ring-0 text-xs sm:text-sm md:text-base font-black uppercase rounded-lg sm:rounded-xl md:rounded-2xl px-3 sm:px-4 md:px-6 cursor-text italic transition-all"
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-black/40 rounded-xl md:rounded-2xl border-2 border-black">
-                    <div className="space-y-2">
-                      <Label htmlFor="dateOfBirth" className="flex items-center gap-2 text-[9px] font-black text-neutral-600 uppercase tracking-[0.3em] italic">
-                        <Calendar className="w-3.5 h-3.5 text-[#ff0033] shrink-0" strokeWidth={4} />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 p-3 sm:p-4 bg-black/40 rounded-lg sm:rounded-xl md:rounded-2xl border-2 border-black">
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="dateOfBirth" className="flex items-center gap-1.5 sm:gap-2 text-[8px] sm:text-[9px] font-black text-neutral-600 uppercase tracking-[0.3em] italic">
+                        <Calendar className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#ff0033] shrink-0" strokeWidth={4} />
                         NASCIMENTO
                       </Label>
                       <Input
@@ -193,19 +194,19 @@ export default function ProfilePage() {
                         name="dateOfBirth"
                         type="date"
                         defaultValue={profile.dateOfBirth ? new Date(profile.dateOfBirth).toISOString().split('T')[0] : ""}
-                        className="h-11 md:h-12 text-sm italic rounded-lg md:rounded-xl border-2 border-black bg-[#0a0a0b] focus:border-[#ff0033]"
+                        className="h-10 sm:h-11 md:h-12 text-xs sm:text-sm italic rounded-lg md:rounded-xl border-2 border-black bg-[#0a0a0b] focus:border-[#ff0033]"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="gender" className="flex items-center gap-2 text-[9px] font-black text-neutral-600 uppercase tracking-[0.3em] italic">
-                        <Users className="w-3.5 h-3.5 text-[#ff0033] shrink-0" strokeWidth={4} />
+                    <div className="space-y-1.5 sm:space-y-2">
+                      <Label htmlFor="gender" className="flex items-center gap-1.5 sm:gap-2 text-[8px] sm:text-[9px] font-black text-neutral-600 uppercase tracking-[0.3em] italic">
+                        <Users className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#ff0033] shrink-0" strokeWidth={4} />
                         SEXO
                       </Label>
                       <select
                         id="gender"
                         name="gender"
                         defaultValue={profile.gender || ""}
-                        className="h-11 md:h-12 w-full bg-[#0a0a0b] border-2 border-black focus:border-[#ff0033] text-sm font-bold uppercase rounded-lg md:rounded-xl px-4 cursor-pointer italic"
+                        className="h-10 sm:h-11 md:h-12 w-full bg-[#0a0a0b] border-2 border-black focus:border-[#ff0033] text-xs sm:text-sm font-bold uppercase rounded-lg md:rounded-xl px-3 sm:px-4 cursor-pointer italic"
                       >
                         <option value="">SELECIONE</option>
                         <option value="masculino">MASCULINO</option>
@@ -215,16 +216,16 @@ export default function ProfilePage() {
                     </div>
                   </div>
 
-                  <div className="space-y-2 group">
-                    <Label htmlFor="trainingTime" className="flex items-center gap-2 text-[9px] font-black text-neutral-600 uppercase tracking-[0.4em] group-focus-within:text-[#ff0033] transition-colors italic">
-                      <Dumbbell className="w-3.5 h-3.5 text-[#ff0033] shrink-0" strokeWidth={4} />
+                  <div className="space-y-1.5 sm:space-y-2 group">
+                    <Label htmlFor="trainingTime" className="flex items-center gap-1.5 sm:gap-2 text-[8px] sm:text-[9px] font-black text-neutral-600 uppercase tracking-[0.4em] group-focus-within:text-[#ff0033] transition-colors italic">
+                      <Dumbbell className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#ff0033] shrink-0" strokeWidth={4} />
                       TEMPO DE TREINO
                     </Label>
                     <select
                       id="trainingTime"
                       name="trainingTime"
                       defaultValue={profile.trainingTime || ""}
-                      className="h-12 w-full bg-black/50 border-2 border-black focus:border-[#ff0033] text-sm font-bold uppercase rounded-xl md:rounded-2xl px-4 cursor-pointer italic"
+                      className="h-11 sm:h-12 w-full bg-black/50 border-2 border-black focus:border-[#ff0033] text-xs sm:text-sm font-bold uppercase rounded-lg sm:rounded-xl md:rounded-2xl px-3 sm:px-4 cursor-pointer italic"
                     >
                       <option value="">SELECIONE</option>
                       <option value="sedentario">SEDENTÁRIO</option>
@@ -239,11 +240,11 @@ export default function ProfilePage() {
               <Button
                 type="submit"
                 disabled={isSaving}
-                className="w-full h-14 md:h-16 bg-[#ff0033] hover:bg-[#ff1100] text-white rounded-xl md:rounded-2xl font-black text-lg md:text-xl uppercase italic tracking-tighter cursor-pointer transition-all active:translate-x-1 active:translate-y-1 active:shadow-none shadow-[6px_6px_0_0_#000] border-2 md:border-4 border-black flex items-center justify-between px-6 md:px-10 group relative overflow-hidden"
+                className="w-full h-12 sm:h-14 md:h-16 bg-[#ff0033] hover:bg-[#ff1100] text-white rounded-lg sm:rounded-xl md:rounded-2xl font-black text-base sm:text-lg md:text-xl uppercase italic tracking-tighter cursor-pointer transition-all active:translate-x-1 active:translate-y-1 active:shadow-none shadow-[6px_6px_0_0_#000] border-2 md:border-4 border-black flex items-center justify-between px-4 sm:px-6 md:px-10 group relative overflow-hidden"
               >
                 <div className="absolute inset-0 bg-white/10 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                 {isSaving ? (
-                    <span className="flex items-center gap-3 relative z-10 text-sm"><Loader2 className="animate-spin w-4 h-4" /> PROCESSANDO...</span>
+                    <span className="flex items-center gap-2 sm:gap-3 relative z-10 text-xs sm:text-sm"><Loader2 className="animate-spin w-3.5 h-3.5 sm:w-4 sm:h-4" /> PROCESSANDO...</span>
                 ) : (
                     <>
                         <span className="relative z-10">UPGRADE OPERACIONAL</span>

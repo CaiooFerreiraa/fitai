@@ -26,3 +26,13 @@ export const DAYS_OF_WEEK = [
 ] as const
 
 export type DayOfWeek = (typeof DAYS_OF_WEEK)[number]
+
+export const DAY_LABELS_PT: Record<DayOfWeek, string> = {
+  MONDAY: "SEGUNDA-FEIRA",
+  TUESDAY: "TERÇA-FEIRA",
+  WEDNESDAY: "QUARTA-FEIRA",
+  THURSDAY: "QUINTA-FEIRA",
+  FRIDAY: "SEXTA-FEIRA",
+  SATURDAY: "SÁBADO",
+  SUNDAY: "DOMINGO",
+}

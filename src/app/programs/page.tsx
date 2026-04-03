@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { listTrainingProgramsAction, setActiveProgramAction, deleteProgramAction, generateTrainingProgramAction } from "@/actions/program-actions"
+import { DAY_LABELS_PT } from "@/domain/entities/workout"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, Loader2, Target, CheckCircle2, Trash2, Sparkles, Calendar, Dumbbell, ChevronDown, ChevronUp, Clock, Hash } from "lucide-react"
 import Link from "next/link"
@@ -77,7 +78,9 @@ export default function ProgramsPage() {
     try {
       await setActiveProgramAction(programId)
       setActiveId(programId)
-      toast.success("CARTILHA ATIVADA")
+      toast.success("CARTILHA ATIVADA", {
+        description: "Treinos aplicados nos dias da semana."
+      })
     } catch (error) {
       toast.error("ERRO AO ATIVAR CARTILHA")
     }
@@ -131,7 +134,7 @@ export default function ProgramsPage() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
+      <main className="max-w-4xl mx-auto p-4 md:p-6 space-y-4 md:space-y-6">
         
         <div className="bg-[#121214] border-2 border-black rounded-2xl p-4 md:p-6 relative overflow-hidden shadow-[6px_6px_0_0_#000]">
           <div className="absolute top-0 right-0 p-4 opacity-[0.05]">
@@ -150,7 +153,7 @@ export default function ProgramsPage() {
         <Button
           onClick={handleGenerateProgram}
           disabled={generating}
-          className="w-full h-14 bg-[#ff0033] hover:bg-[#ff1100] text-white rounded-xl font-black text-lg cursor-pointer uppercase italic transition-all shadow-[6px_6px_0_0_#000000] border-2 border-black flex items-center justify-center gap-3"
+          className="w-full h-12 sm:h-14 bg-[#ff0033] hover:bg-[#ff1100] text-white rounded-xl font-black text-base sm:text-lg cursor-pointer uppercase italic transition-all shadow-[6px_6px_0_0_#000000] border-2 border-black flex items-center justify-center gap-3"
         >
           {generating ? (
             <>
@@ -165,10 +168,9 @@ export default function ProgramsPage() {
           )}
         </Button>
 
-        <div className="space-y-4">
-          {programs.length === 0 ? (
-            <div className="bg-[#121214] border-2 border-black rounded-2xl p-8 text-center">
-              <p className="text-neutral-600 font-black italic uppercase tracking-widest text-sm">
+        <div className="space-y-3 sm:space-y-4">{programs.length === 0 ? (
+            <div className="bg-[#121214] border-2 border-black rounded-2xl p-6 sm:p-8 text-center">
+              <p className="text-neutral-600 font-black italic uppercase tracking-widest text-xs sm:text-sm">
                 NENHUMA CARTILHA CRIADA
               </p>
             </div>
@@ -178,14 +180,14 @@ export default function ProgramsPage() {
                 key={program.id}
                 className="bg-[#121214] border-2 border-black rounded-2xl p-4 md:p-6 relative overflow-hidden shadow-[6px_6px_0_0_#000] hover:border-[#ff0033]/20 transition-all"
               >
-                <div className="space-y-4">
-                  <div className="flex items-start justify-between gap-4">
+                <div className="space-y-3 sm:space-y-4">
+                  <div className="flex items-start justify-between gap-3 sm:gap-4">
                     <div className="flex-1">
-                      <h2 className="text-xl md:text-2xl font-black uppercase italic tracking-tighter text-white">
+                      <h2 className="text-lg sm:text-xl md:text-2xl font-black uppercase italic tracking-tighter text-white">
                         {program.name}
                       </h2>
                       {program.description && (
-                        <p className="text-neutral-500 font-bold italic text-sm mt-1">
+                        <p className="text-neutral-500 font-bold italic text-xs sm:text-sm mt-1">
                           {program.description}
                         </p>
                       )}
@@ -194,7 +196,7 @@ export default function ProgramsPage() {
                       onClick={() => handleDelete(program.id)}
                       className="text-neutral-600 hover:text-[#ff0033] transition-colors cursor-pointer"
                     >
-                      <Trash2 className="w-5 h-5" strokeWidth={3} />
+                      <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={3} />
                     </button>
                   </div>
 
@@ -224,49 +226,49 @@ export default function ProgramsPage() {
                   </div>
 
                   {expandedPrograms.has(program.id) && (
-                    <div className="mt-4 space-y-3">
+                    <div className="mt-3 sm:mt-4 space-y-2 sm:space-y-3">
                       {program.workoutPlans.map((workout) => (
                         <div
                           key={workout.id}
-                          className="bg-black/40 border border-white/5 rounded-xl p-4 space-y-3"
+                          className="bg-black/40 border border-white/5 rounded-xl p-3 sm:p-4 space-y-2 sm:space-y-3"
                         >
                           <div className="flex items-center justify-between">
                             <div>
-                              <h3 className="text-sm font-black uppercase italic text-white tracking-tight">
-                                {workout.dayOfWeek}
+                              <h3 className="text-xs sm:text-sm font-black uppercase italic text-white tracking-tight">
+                                {DAY_LABELS_PT[workout.dayOfWeek as keyof typeof DAY_LABELS_PT] || workout.dayOfWeek}
                               </h3>
                               {workout.name && (
-                                <p className="text-xs font-bold text-neutral-500 mt-0.5">
+                                <p className="text-[10px] sm:text-xs font-bold text-neutral-500 mt-0.5">
                                   {workout.name}
                                 </p>
                               )}
                             </div>
-                            <span className="text-[9px] font-black uppercase text-neutral-600 italic">
+                            <span className="text-[8px] sm:text-[9px] font-black uppercase text-neutral-600 italic">
                               {workout.exercises.length} exercícios
                             </span>
                           </div>
 
-                          <div className="space-y-2">
+                          <div className="space-y-1.5 sm:space-y-2">
                             {workout.exercises.sort((a, b) => a.order - b.order).map((exercise) => (
                               <div
                                 key={exercise.id}
-                                className="bg-black/40 border border-white/10 rounded-lg p-3 space-y-2"
+                                className="bg-black/40 border border-white/10 rounded-lg p-2.5 sm:p-3 space-y-1.5 sm:space-y-2"
                               >
                                 <div className="flex items-start justify-between gap-2">
-                                  <span className="text-sm font-black text-white uppercase italic">
+                                  <span className="text-xs sm:text-sm font-black text-white uppercase italic">
                                     {exercise.name}
                                   </span>
                                 </div>
-                                <div className="flex flex-wrap gap-2">
-                                  <div className="flex items-center gap-1.5 bg-black/60 px-2 py-1 rounded border border-white/5">
-                                    <Hash className="w-3 h-3 text-[#ff0033]" />
-                                    <span className="text-[10px] font-black text-neutral-400 uppercase">
+                                <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                                  <div className="flex items-center gap-1 sm:gap-1.5 bg-black/60 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded border border-white/5">
+                                    <Hash className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#ff0033]" />
+                                    <span className="text-[9px] sm:text-[10px] font-black text-neutral-400 uppercase">
                                       {exercise.sets}x{exercise.reps}
                                     </span>
                                   </div>
-                                  <div className="flex items-center gap-1.5 bg-black/60 px-2 py-1 rounded border border-white/5">
-                                    <Clock className="w-3 h-3 text-[#ff0033]" />
-                                    <span className="text-[10px] font-black text-neutral-400 uppercase">
+                                  <div className="flex items-center gap-1 sm:gap-1.5 bg-black/60 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded border border-white/5">
+                                    <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-[#ff0033]" />
+                                    <span className="text-[9px] sm:text-[10px] font-black text-neutral-400 uppercase">
                                       {exercise.timer}s
                                     </span>
                                   </div>
@@ -281,16 +283,16 @@ export default function ProgramsPage() {
 
                   <Button
                     onClick={() => toggleExpand(program.id)}
-                    className="w-full h-10 bg-black/40 hover:bg-black/60 text-white border border-white/10 rounded-xl font-black text-xs uppercase italic transition-all"
+                    className="w-full h-9 sm:h-10 bg-black/40 hover:bg-black/60 text-white border border-white/10 rounded-xl font-black text-[10px] sm:text-xs uppercase italic transition-all"
                   >
                     {expandedPrograms.has(program.id) ? (
                       <>
-                        <ChevronUp className="w-4 h-4 mr-2" />
+                        <ChevronUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                         OCULTAR EXERCÍCIOS
                       </>
                     ) : (
                       <>
-                        <ChevronDown className="w-4 h-4 mr-2" />
+                        <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                         VER EXERCÍCIOS
                       </>
                     )}
@@ -299,7 +301,7 @@ export default function ProgramsPage() {
                   <Button
                     onClick={() => handleSetActive(program.id)}
                     disabled={activeId === program.id}
-                    className={`w-full h-12 rounded-xl font-black text-base cursor-pointer uppercase italic transition-all border-2 border-black shadow-[4px_4px_0_0_#000] ${
+                    className={`w-full h-11 sm:h-12 rounded-xl font-black text-sm sm:text-base cursor-pointer uppercase italic transition-all border-2 border-black shadow-[4px_4px_0_0_#000] ${
                       activeId === program.id
                         ? "bg-green-600 hover:bg-green-700 text-white"
                         : "bg-white hover:bg-neutral-100 text-black"
@@ -307,7 +309,7 @@ export default function ProgramsPage() {
                   >
                     {activeId === program.id ? (
                       <>
-                        <CheckCircle2 className="w-5 h-5 mr-2" />
+                        <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 mr-1.5 sm:mr-2" />
                         CARTILHA ATIVA
                       </>
                     ) : (
