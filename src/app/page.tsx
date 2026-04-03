@@ -100,10 +100,10 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-dvh bg-[#0a0a0b] text-white font-sans selection:bg-[#ff0033] noise-overlay pb-20 md:pb-6">
+    <div className="min-h-dvh bg-[#0a0a0b] text-white font-sans selection:bg-[#ff0033] noise-overlay pb-20 lg:pb-6 lg:overflow-hidden">
       
       <header className="relative z-30 sticky top-0 bg-[#0a0a0b]/80 backdrop-blur-2xl border-b-2 border-black/50">
-        <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-8 h-12 sm:h-14 md:h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-8 lg:px-10 h-12 sm:h-14 lg:h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer">
             <div className="bg-[#ff0033] p-1 sm:p-1.5 rounded-lg border-2 border-black shadow-[3px_3px_0_0_#000]">
               <Dumbbell className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" strokeWidth={4} />
@@ -136,9 +136,9 @@ export default function HomePage() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-3 sm:px-4 md:px-8 pt-3 sm:pt-4 md:pt-6 space-y-3 sm:space-y-4 md:space-y-6">
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 md:px-8 lg:px-10 pt-3 sm:pt-4 lg:pt-6 space-y-3 sm:space-y-4 lg:space-y-5">
 
-        <section className="bg-[#121214] border-2 md:border-4 border-black rounded-xl sm:rounded-2xl md:rounded-3xl p-4 sm:p-5 md:p-6 relative overflow-hidden group shadow-[6px_6px_0_0_#000]">
+        <section className="bg-[#121214] border-2 lg:border-2 border-black rounded-xl sm:rounded-2xl lg:rounded-2xl p-4 sm:p-5 lg:p-5 relative overflow-hidden group shadow-[6px_6px_0_0_#000]">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(255,0,51,0.03),transparent_60%)] pointer-events-none" />
 
           <div className="relative z-10 space-y-1 sm:space-y-1.5">
@@ -146,7 +146,7 @@ export default function HomePage() {
               <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full bg-[#ff0033] animate-ping" />
               <span className="text-[7px] sm:text-[8px] font-black text-[#ff0033] uppercase tracking-[0.3em] italic">CENTRAL DE COMANDO</span>
             </div>
-            <h2 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-black uppercase italic tracking-tighter leading-none text-white">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-black uppercase italic tracking-tighter leading-none text-white">
               BEM-VINDO,<br />
               <span className="text-[#ff0033] uppercase">{firstName}.</span>
             </h2>
@@ -156,9 +156,9 @@ export default function HomePage() {
           </div>
         </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-5">
           
-          <div className="lg:col-span-2 space-y-3 sm:space-y-4">
+          <div className="lg:col-span-2 space-y-3 sm:space-y-4 lg:space-y-4">
             <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto pb-2 scrollbar-hide">
               {[...Object.keys(DAY_LABELS)].map((day) => (
                 <button
@@ -181,27 +181,27 @@ export default function HomePage() {
 
             <div className="relative group">
               <Link href={activePlan ? `/workout/${activePlan.id}` : "/config"}>
-                <div className="bg-gradient-to-br from-[#ff0033] to-[#9a0022] rounded-xl sm:rounded-2xl md:rounded-3xl p-5 sm:p-6 md:p-8 border-2 md:border-4 border-black shadow-[6px_6px_0_0_#000] sm:shadow-[8px_8px_0_0_#000] cursor-pointer transition-all active:translate-x-1 active:translate-y-1 active:shadow-none relative overflow-hidden group/btn">
-                  <div className="absolute top-0 right-0 p-3 sm:p-4 opacity-[0.1] group-hover/btn:scale-110 transition-transform">
-                    <Zap className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 text-white" strokeWidth={4} />
+                <div className="bg-gradient-to-br from-[#ff0033] to-[#9a0022] rounded-xl sm:rounded-2xl lg:rounded-2xl p-5 sm:p-6 lg:p-6 border-2 lg:border-2 border-black shadow-[6px_6px_0_0_#000] cursor-pointer transition-all active:translate-x-1 active:translate-y-1 active:shadow-none relative overflow-hidden group/btn">
+                  <div className="absolute top-0 right-0 p-3 sm:p-4 lg:p-4 opacity-[0.1] group-hover/btn:scale-110 transition-transform">
+                    <Zap className="w-16 h-16 sm:w-20 sm:h-20 lg:w-20 lg:h-20 text-white" strokeWidth={4} />
                   </div>
-                  <div className="relative z-10 space-y-3 sm:space-y-4">
+                  <div className="relative z-10 space-y-3 sm:space-y-4 lg:space-y-3">
                     <div>
                       <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.3em] text-white/40 italic">
                         {slogans.home_workout_day} {activeDay === todayStr && "· HOJE"}
                       </span>
-                      <h3 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl font-black italic uppercase tracking-tighter leading-none text-white mt-0.5 sm:mt-1">
+                      <h3 className="text-xl sm:text-2xl lg:text-3xl font-black italic uppercase tracking-tighter leading-none text-white mt-0.5 sm:mt-1">
                         {activePlan ? (
                           <>
                             {DAY_LABELS[activeDay]}<span className="text-white/30">.</span><br />
-                            <span className="text-[9px] sm:text-[10px] md:text-sm text-white/70 block mt-0.5 sm:mt-1 tracking-[0.2em]">{activePlan.name}</span>
+                            <span className="text-[9px] sm:text-[10px] lg:text-xs text-white/70 block mt-0.5 sm:mt-1 tracking-[0.2em]">{activePlan.name}</span>
                           </>
                         ) : (
                           <>SEM<br /><span className="text-white/60 text-sm sm:text-base">TREINO DEFINIDO.</span></>
                         )}
                       </h3>
                     </div>
-                    <Button className="h-9 sm:h-10 px-4 sm:px-6 bg-white hover:bg-neutral-100 text-black rounded-lg sm:rounded-xl font-black text-xs md:text-sm border-2 md:border-4 border-black shadow-[3px_3px_0_0_#000] sm:shadow-[4px_4px_0_0_#000] flex items-center justify-between gap-3 sm:gap-4 pointer-events-none">
+                    <Button className="h-9 sm:h-10 lg:h-10 px-4 sm:px-6 bg-white hover:bg-neutral-100 text-black rounded-lg sm:rounded-xl font-black text-xs lg:text-sm border-2 lg:border-2 border-black shadow-[3px_3px_0_0_#000] sm:shadow-[4px_4px_0_0_#000] flex items-center justify-between gap-3 sm:gap-4 pointer-events-none">
                       {activePlan ? "INICIAR SESSÃO" : "MONTAR AGORA"}
                       <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" strokeWidth={5} />
                     </Button>
@@ -211,7 +211,7 @@ export default function HomePage() {
             </div>
 
             {activePlan && activePlan.exercises.length > 0 && (
-              <div className="bg-[#121214] border-2 md:border-4 border-black rounded-xl sm:rounded-2xl md:rounded-3xl p-4 sm:p-5 shadow-[6px_6px_0_0_#000]">
+              <div className="bg-[#121214] border-2 lg:border-2 border-black rounded-xl sm:rounded-2xl lg:rounded-2xl p-4 sm:p-5 lg:p-4 shadow-[6px_6px_0_0_#000] lg:hidden">
                 <div className="flex items-center gap-1.5 sm:gap-2 mb-3 sm:mb-4">
                   <div className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-[#ff0033] animate-pulse" />
                   <span className="text-[8px] sm:text-[9px] font-black text-neutral-600 uppercase tracking-[0.3em] italic">LOG DE CAMPO</span>
@@ -274,117 +274,53 @@ export default function HomePage() {
             )}
           </div>
 
-          <div className="space-y-3 sm:space-y-4">{activePlan && activePlan.exercises.length > 0 && (
-              <div className="bg-[#121214] border-2 md:border-4 border-black rounded-2xl md:rounded-3xl p-5 shadow-[6px_6px_0_0_#000]">
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#ff0033] animate-pulse" />
-                  <span className="text-[9px] font-black text-neutral-600 uppercase tracking-[0.3em] italic">LOG DE CAMPO</span>
-                </div>
-
-                {loggingExercise ? (
-                   <div className="bg-black/40 border-2 border-[#ff0033]/20 rounded-xl p-4 animate-in slide-in-from-top-4 duration-500">
-                      <div className="flex items-center justify-between mb-3">
-                        <span className="font-black italic uppercase text-[#ff0033] text-xs tracking-tighter">REGISTRO: {loggingExercise.name}</span>
-                        <button onClick={() => setLoggingExercise(null)} className="text-neutral-700 hover:text-white transition-colors"><X size={18}/></button>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-                        <div className="space-y-1">
-                          <Label className="text-[8px] font-black text-neutral-600 uppercase tracking-widest italic">CARGA (KG)</Label>
-                          <NumberInput value={quickWeight} onChange={setQuickWeight} step={0.5} className="h-11 text-lg italic bg-[#1c1c1f] border border-black rounded-lg text-center" />
-                        </div>
-                        <div className="space-y-1">
-                          <Label className="text-[8px] font-black text-neutral-600 uppercase tracking-widest italic">REPS</Label>
-                          <NumberInput value={quickReps} onChange={setQuickReps} min={1} className="h-11 text-lg italic bg-[#1c1c1f] border border-black rounded-lg text-center" />
-                        </div>
-                      </div>
-                      <Button 
-                        onClick={handleQuickLog}
-                        disabled={isSubmitting}
-                        className="w-full h-11 bg-[#ff0033] hover:bg-[#ff1100] text-white font-black italic uppercase tracking-wider text-xs rounded-lg border border-black shadow-[3px_3px_0_0_#000] active:translate-y-0.5 active:shadow-none"
-                      >
-                        {isSubmitting ? <Loader2 className="animate-spin w-4 h-4" /> : "CONFIRMAR LOG"}
-                      </Button>
-                   </div>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {activePlan.exercises.map((ex, i) => (
-                      <button 
-                        key={i} 
-                        onClick={async () => {
-                          setLoggingExercise(ex);
-                          const lastLog = await getLatestLogAction(ex.id!);
-                          if (lastLog) {
-                            setQuickReps(lastLog.repsReached ?? ex.reps);
-                            setQuickWeight(lastLog.weight ?? 0);
-                          } else {
-                            setQuickReps(ex.reps);
-                            setQuickWeight(0);
-                          }
-                        }}
-                        className="bg-black/60 border border-white/5 hover:border-[#ff0033]/40 p-3 rounded-xl flex items-center justify-between group transition-all text-left"
-                      >
-                        <div className="space-y-0.5">
-                          <span className="text-[7px] font-black text-[#ff0033] uppercase tracking-[0.2em] opacity-40 italic">EQ{i+1}</span>
-                          <h4 className="text-sm font-black italic uppercase tracking-tight text-neutral-500 group-hover:text-white transition-colors">{ex.name}</h4>
-                        </div>
-                        <div className="bg-[#1c1c1f] p-1.5 rounded-lg border border-black opacity-20 group-hover:opacity-100 transition-opacity">
-                          <Check size={12} className="text-[#ff0033]" strokeWidth={4}/>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4 lg:space-y-4">
             <Link href="/profile" className="block group">
-              <div className="bg-[#121214] border-2 border-black rounded-xl sm:rounded-2xl p-4 sm:p-5 shadow-[6px_6px_0_0_#000] hover:border-[#ff0033]/30 transition-all relative overflow-hidden">
-                <div className="flex items-center justify-between mb-2 sm:mb-3">
+              <div className="bg-[#121214] border-2 border-black rounded-xl sm:rounded-2xl p-4 sm:p-5 lg:p-4 shadow-[6px_6px_0_0_#000] hover:border-[#ff0033]/30 transition-all relative overflow-hidden">
+                <div className="flex items-center justify-between mb-2 sm:mb-3 lg:mb-2">
                   <div className="flex items-center gap-1 sm:gap-1.5">
                     <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full bg-[#ff0033] animate-ping" />
                     <span className="text-[7px] sm:text-[8px] font-black text-neutral-700 uppercase tracking-[0.4em] italic">STATUS UNIT</span>
                   </div>
                   <Trophy className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-neutral-700 group-hover:text-[#ff0033] transition-colors" />
                 </div>
-                <h4 className="text-lg sm:text-xl font-black italic uppercase tracking-tighter text-white group-hover:text-[#ff0033] transition-colors leading-none">
+                <h4 className="text-lg sm:text-xl lg:text-lg font-black italic uppercase tracking-tighter text-white group-hover:text-[#ff0033] transition-colors leading-none">
                   ALPHA ELITE.
                 </h4>
               </div>
             </Link>
 
             <Link href="/ai-coach" className="block group">
-              <div className="bg-gradient-to-br from-[#1c1c1f] to-[#0a0a0b] border-2 border-black rounded-xl sm:rounded-2xl p-4 sm:p-5 shadow-[6px_6px_0_0_#000] hover:border-[#ff0033]/40 transition-all relative overflow-hidden h-full">
+              <div className="bg-gradient-to-br from-[#1c1c1f] to-[#0a0a0b] border-2 border-black rounded-xl sm:rounded-2xl p-4 sm:p-5 lg:p-4 shadow-[6px_6px_0_0_#000] hover:border-[#ff0033]/40 transition-all relative overflow-hidden h-full">
                  <div className="absolute -bottom-3 -right-3 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
-                    <Zap className="w-16 h-16 sm:w-20 sm:h-20 text-[#ff0033]" strokeWidth={4} />
+                    <Zap className="w-16 h-16 sm:w-20 sm:h-20 lg:w-16 lg:h-16 text-[#ff0033]" strokeWidth={4} />
                  </div>
-                 <div className="flex items-center gap-1 sm:gap-1.5 mb-2 sm:mb-3">
+                 <div className="flex items-center gap-1 sm:gap-1.5 mb-2 sm:mb-3 lg:mb-2">
                     <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full bg-[#ff0033]" />
                     <span className="text-[7px] sm:text-[8px] font-black text-neutral-700 uppercase tracking-[0.4em] italic">IA COACH</span>
                  </div>
-                 <h4 className="text-base sm:text-lg font-black italic uppercase tracking-tighter text-white leading-none">CONSULTAR<br/>COACH.</h4>
+                 <h4 className="text-base sm:text-lg lg:text-base font-black italic uppercase tracking-tighter text-white leading-none">CONSULTAR<br/>COACH.</h4>
               </div>
             </Link>
 
             <Link href="/programs" className="block group">
-              <div className="bg-[#121214] border-2 border-black rounded-xl sm:rounded-2xl p-4 sm:p-5 shadow-[6px_6px_0_0_#000] hover:border-[#ff0033]/30 transition-all relative overflow-hidden">
-                <div className="flex items-center justify-between mb-2 sm:mb-3">
+              <div className="bg-[#121214] border-2 border-black rounded-xl sm:rounded-2xl p-4 sm:p-5 lg:p-4 shadow-[6px_6px_0_0_#000] hover:border-[#ff0033]/30 transition-all relative overflow-hidden">
+                <div className="flex items-center justify-between mb-2 sm:mb-3 lg:mb-2">
                   <div className="flex items-center gap-1 sm:gap-1.5">
                     <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full bg-[#ff0033]" />
                     <span className="text-[7px] sm:text-[8px] font-black text-neutral-700 uppercase tracking-[0.4em] italic">CARTILHAS</span>
                   </div>
                   <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-neutral-700 group-hover:text-[#ff0033] transition-colors" />
                 </div>
-                <h4 className="text-lg sm:text-xl font-black italic uppercase tracking-tighter text-white group-hover:text-[#ff0033] transition-colors leading-none">
+                <h4 className="text-lg sm:text-xl lg:text-lg font-black italic uppercase tracking-tighter text-white group-hover:text-[#ff0033] transition-colors leading-none">
                   PROGRAMAS<br/>DE TREINO.
                 </h4>
               </div>
             </Link>
 
-            <div className="hidden lg:grid grid-cols-2 gap-2 pt-2">
-               <QuickLink href="/config" icon={<Settings size={16}/>} label="CONFIG"/>
-               <QuickLink href="/profile" icon={<User size={16}/>} label="PERFIL"/>
+            <div className="hidden lg:grid grid-cols-2 gap-2">
+               <QuickLink href="/config" icon={<Settings size={14}/>} label="CONFIG"/>
+               <QuickLink href="/profile" icon={<User size={14}/>} label="PERFIL"/>
             </div>
           </div>
         </div>
@@ -414,9 +350,9 @@ function HeaderNavBtn({ href, children }: { href: string; children: React.ReactN
 function QuickLink({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) {
   return (
     <Link href={href} className="group">
-      <div className="bg-[#121214] border-2 border-black rounded-xl p-3 flex flex-col items-center gap-1.5 shadow-[3px_3px_0_0_#000] hover:border-[#ff0033]/40 active:translate-y-0.5 transition-all cursor-pointer text-neutral-600 hover:text-white">
+      <div className="bg-[#121214] border-2 border-black rounded-lg p-2.5 flex flex-col items-center gap-1 shadow-[3px_3px_0_0_#000] hover:border-[#ff0033]/40 active:translate-y-0.5 transition-all cursor-pointer text-neutral-600 hover:text-white">
         {icon}
-        <span className="text-[8px] font-black uppercase tracking-widest italic">{label}</span>
+        <span className="text-[7px] font-black uppercase tracking-widest italic">{label}</span>
       </div>
     </Link>
   )

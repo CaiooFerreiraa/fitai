@@ -53,11 +53,14 @@ export default function AiCoachPage() {
 
     const userText = inputValue.trim()
     setInputValue("")
-    setMessages(prev => [...prev, { role: "user", text: userText }])
+    const newUserMessage = { role: "user" as const, text: userText }
+    setMessages(prev => [...prev, newUserMessage])
     setIsLoading(true)
 
     try {
-      const response = await getAiCoachAdviceAction(userText)
+      // Send conversation history along with the current question
+      const conversationHistory = [...messages, newUserMessage]
+      const response = await getAiCoachAdviceAction(userText, conversationHistory)
       setMessages(prev => [...prev, { role: "coach", text: response }])
     } catch (error: unknown) {
       if (error instanceof Error && error.message === "PREMIUM_REQUIRED") {

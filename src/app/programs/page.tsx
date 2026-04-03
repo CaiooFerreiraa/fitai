@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { listTrainingProgramsAction, setActiveProgramAction, deleteProgramAction, generateTrainingProgramAction } from "@/actions/program-actions"
 import { DAY_LABELS_PT } from "@/domain/entities/workout"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, Loader2, Target, CheckCircle2, Trash2, Sparkles, Calendar, Dumbbell, ChevronDown, ChevronUp, Clock, Hash } from "lucide-react"
+import { ChevronLeft, Loader2, Target, CheckCircle2, Trash2, Sparkles, Calendar, Dumbbell, ChevronDown, ChevronUp, Clock, Hash, AlertTriangle, X } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
 
@@ -40,6 +40,8 @@ export default function ProgramsPage() {
   const [loading, setLoading] = useState(true)
   const [generating, setGenerating] = useState(false)
   const [expandedPrograms, setExpandedPrograms] = useState<Set<string>>(new Set())
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [programToDelete, setProgramToDelete] = useState<string | null>(null)
 
   async function loadPrograms() {
     setLoading(true)
@@ -87,14 +89,24 @@ export default function ProgramsPage() {
   }
 
   async function handleDelete(programId: string) {
-    if (!confirm("Deletar esta cartilha permanentemente?")) return
+    setProgramToDelete(programId)
+    setDeleteDialogOpen(true)
+  }
+
+  async function confirmDelete() {
+    if (!programToDelete) return
     
     try {
-      await deleteProgramAction(programId)
-      toast.success("CARTILHA DELETADA")
+      await deleteProgramAction(programToDelete)
+      toast.success("CARTILHA DELETADA", {
+        description: "Programa de treino removido com sucesso."
+      })
       await loadPrograms()
     } catch (error) {
       toast.error("ERRO AO DELETAR CARTILHA")
+    } finally {
+      setDeleteDialogOpen(false)
+      setProgramToDelete(null)
     }
   }
 
@@ -322,6 +334,48 @@ export default function ProgramsPage() {
           )}
         </div>
       </main>
+
+      {/* Delete Confirmation Dialog */}
+      {deleteDialogOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-[#121214] border-4 border-black rounded-2xl p-6 max-w-md w-full shadow-[12px_12px_0_0_#000] animate-in zoom-in-95 duration-200">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="bg-[#ff0033]/10 p-3 rounded-xl border-2 border-[#ff0033]/20">
+                <AlertTriangle className="w-6 h-6 text-[#ff0033]" strokeWidth={3} />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl font-black uppercase italic tracking-tighter text-white mb-2">
+                  OPERAÇÃO IRREVERSÍVEL
+                </h3>
+                <p className="text-sm font-bold text-neutral-400 leading-relaxed">
+                  Deletar esta cartilha permanentemente? Todos os treinos associados serão perdidos.
+                </p>
+              </div>
+              <button
+                onClick={() => setDeleteDialogOpen(false)}
+                className="text-neutral-600 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" strokeWidth={3} />
+              </button>
+            </div>
+            
+            <div className="flex gap-3">
+              <Button
+                onClick={() => setDeleteDialogOpen(false)}
+                className="flex-1 h-12 bg-[#1c1c1f] hover:bg-[#2c2c2f] border-2 border-black text-white rounded-xl font-black uppercase italic text-sm transition-all shadow-[4px_4px_0_0_#000]"
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={confirmDelete}
+                className="flex-1 h-12 bg-[#ff0033] hover:bg-[#ff1100] border-2 border-black text-white rounded-xl font-black uppercase italic text-sm transition-all shadow-[4px_4px_0_0_#000] active:translate-y-0.5"
+              >
+                Deletar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

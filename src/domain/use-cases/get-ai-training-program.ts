@@ -97,6 +97,136 @@ ${biometryContext}
 ${ageContext}
 ${trainingContext}
 
+## BANCO DE DADOS DE EXERCÍCIOS (USE ESTES NOMES EXATOS)
+
+### PEITO
+- Supino reto com barra
+- Supino inclinado com barra
+- Supino declinado com barra
+- Supino reto com halteres
+- Supino inclinado com halteres
+- Crucifixo reto com halteres
+- Crucifixo inclinado com halteres
+- Crossover no cabo
+- Flexão de braço (push-up)
+- Flexão de braço com carga
+- Peck deck (voador)
+
+### COSTAS
+- Barra fixa (pull-up)
+- Barra fixa pegada aberta
+- Barra fixa pegada supinada
+- Puxada frontal
+- Puxada alta pegada aberta
+- Remada curvada com barra
+- Remada curvada com halteres
+- Remada unilateral com halter
+- Remada cavalinho
+- Remada baixa no cabo
+- Pulldown com corda
+- Levantamento terra (deadlift)
+- Levantamento terra romeno
+- Pullover com halter
+- Pullover no cabo
+
+### PERNAS (QUADRÍCEPS)
+- Agachamento livre com barra
+- Agachamento frontal
+- Agachamento búlgaro
+- Leg press 45 graus
+- Leg press horizontal
+- Cadeira extensora
+- Hack squat
+- Afundo com halteres
+- Afundo caminhando
+- Agachamento sumô
+
+### PERNAS (POSTERIORES DE COXA)
+- Levantamento terra romeno
+- Stiff com barra
+- Stiff com halteres
+- Mesa flexora
+- Flexão nórdica
+- Elevação pélvica (hip thrust)
+- Elevação pélvica unilateral
+
+### PERNAS (GLÚTEOS)
+- Elevação pélvica com barra
+- Elevação pélvica unilateral
+- Agachamento sumô
+- Abdução de quadril no cabo
+- Coice no cabo
+- Step-up com halteres
+
+### PERNAS (PANTURRILHAS)
+- Panturrilha em pé no smith
+- Panturrilha sentado
+- Panturrilha no leg press
+- Panturrilha unilateral
+
+### OMBROS
+- Desenvolvimento com barra
+- Desenvolvimento com halteres
+- Desenvolvimento militar
+- Elevação lateral com halteres
+- Elevação frontal com halter
+- Elevação frontal com barra
+- Remada alta com barra
+- Remada alta no cabo
+- Crucifixo inverso com halteres
+- Desenvolvimento Arnold
+- Face pull no cabo
+
+### BÍCEPS
+- Rosca direta com barra
+- Rosca direta com barra W
+- Rosca alternada com halteres
+- Rosca martelo
+- Rosca scott (banco scott)
+- Rosca concentrada
+- Rosca no cabo
+- Rosca inversa
+
+### TRÍCEPS
+- Tríceps testa com barra
+- Tríceps testa com halteres
+- Tríceps francês com halter
+- Tríceps corda no cabo
+- Tríceps barra no cabo
+- Mergulho em paralelas
+- Tríceps coice com halter
+- Tríceps kickback
+
+### CORE/ABDÔMEN
+- Abdominal supra
+- Abdominal infra
+- Prancha isométrica
+- Prancha lateral
+- Elevação de pernas suspenso
+- Abdominal bicicleta
+- Russian twist
+- Pallof press
+
+## DIVISÕES DE TREINO PERMITIDAS
+
+### 3 DIAS/SEMANA
+1. **Full Body ABC** (iniciantes): Corpo todo 3x
+2. **Push Pull Legs** (compacto): Push, Pull, Legs
+
+### 4 DIAS/SEMANA  
+1. **Upper Lower** (recomendado): Superior A, Inferior A, Superior B, Inferior B
+2. **Push Pull Legs** + Full Body: Push, Pull, Legs, Full Body
+3. **ABCD**: Peito/Tríceps, Costas/Bíceps, Pernas, Ombros/Core
+
+### 5 DIAS/SEMANA
+1. **Push Pull Legs** (clássico): Push A, Pull A, Legs A, Push B, Pull B
+2. **ABCDE**: Peito, Costas, Pernas, Ombros/Tríceps, Bíceps/Core
+3. **Upper Lower** + PPL: Upper, Lower, Push, Pull, Legs
+
+### 6 DIAS/SEMANA
+1. **Push Pull Legs** (2x): Push A, Pull A, Legs A, Push B, Pull B, Legs B
+2. **Arnold Split**: Peito/Costas, Ombros/Braços, Pernas (repetir 2x)
+
 ## ORIENTAÇÕES GERAIS (INCLUIR EM TODAS AS CARTILHAS)
 
 ### Intervalos entre séries
@@ -207,11 +337,11 @@ Retorne APENAS um JSON válido (sem markdown, sem explicações extras):
   "duration": "Duração do mesociclo (4-8 semanas para iniciante/intermediário, 4-6 para avançado)",
   "workouts": [
     {
-      "dayOfWeek": "Segunda",
+      "dayOfWeek": "MONDAY",
       "name": "Nome do Treino (ex: Peito e Tríceps - Push A)",
       "exercises": [
         {
-          "name": "Nome completo do exercício em português",
+          "name": "Nome completo do exercício em português (EXATAMENTE como listado no banco)",
           "sets": ${experienceLevel === "iniciante" ? 3 : experienceLevel === "intermediário" ? 4 : 4},
           "reps": ${experienceLevel === "iniciante" ? 12 : experienceLevel === "intermediário" ? 10 : 8},
           "timer": ${experienceLevel === "iniciante" ? 90 : experienceLevel === "intermediário" ? 75 : 60},
@@ -222,12 +352,14 @@ Retorne APENAS um JSON válido (sem markdown, sem explicações extras):
   ]
 }
 
-## REGRAS FINAIS
-- Crie EXATAMENTE ${daysPerWeek} treinos (distribuir Segunda a Domingo)
+## REGRAS FINAIS - LEIA COM ATENÇÃO
+- Crie EXATAMENTE ${daysPerWeek} treinos
+- Use os dias em INGLÊS: MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
 - Cada treino: ${experienceLevel === "iniciante" ? "4-6" : experienceLevel === "intermediário" ? "6-8" : "7-10"} exercícios
 - Sempre começar com compostos, terminar com isolados
 - Respeitar volume semanal ideal por grupo
-- Nomenclatura brasileira (Supino reto com barra, não "Bench Press")
+- Use APENAS exercícios do BANCO DE DADOS listado acima
+- Use os nomes EXATAMENTE como escritos no banco (não invente variações)
 - Justifique escolhas com base científica (interno, não exiba no JSON)`
 
     const userMessage: string = `Crie uma cartilha de treino completa para ${userName} focada em ${userGoal}. Retorne APENAS o JSON, sem formatação markdown.`
