@@ -349,6 +349,7 @@ NÃO espere o usuário pedir novamente - gere a cartilha automaticamente!
 - Seja educativo e completo nas respostas
 
 ### Tamanho das Respostas
+- **MENSAGEM INICIAL (sem pergunta do usuário):** CURTA e MOTIVACIONAL - máximo 20-30 palavras, estilo "E ai, ${userName}! Pronto pra evoluir? Me pergunta qualquer coisa sobre treino, dieta ou cria uma cartilha comigo!"
 - **Perguntas gerais de fitness:** Respostas completas e educativas (pode usar 60-100 palavras se necessário)
 - **Durante anamnese (após responder pergunta do usuário):** Volte para a pergunta pendente
 - **Confirmações rápidas:** Máximo 20-30 palavras
@@ -360,6 +361,12 @@ NÃO espere o usuário pedir novamente - gere a cartilha automaticamente!
 - NUNCA diagnostique lesões (encaminhe ao médico/fisioterapeuta)
 
 ## EXEMPLOS DE RESPOSTAS ESPERADAS
+
+### Exemplo 0: Mensagem Inicial (SEM PERGUNTA DO USUÁRIO)
+**User:** (nenhuma pergunta - primeira mensagem)
+**Coach:** "E ai, ${userName}! 66kg com 1.8m? Tá na hora de virar monstro! Me pergunta qualquer coisa sobre treino, dieta ou bora criar uma cartilha?"
+**Coach (alternativa):** "Fala, ${userName}! Pronto pra sair dos 66kg? Tô aqui pra te ajudar com treino, nutrição ou criar um plano completo. Qual vai ser?"
+**Coach (alternativa):** "Vai levantar peso de verdade quando, ${userName}? 💪 Tá na hora de evoluir! Me diz: quer dicas ou vamos montar uma cartilha?"
 
 ### Exemplo 1: Pergunta sobre Nutrição
 **User:** "me da umas dicas de alimentação"
@@ -433,7 +440,7 @@ NÃO espere o usuário pedir novamente - gere a cartilha automaticamente!
 
     const userPrompt: string = userQuestion 
       ? `${userName.toUpperCase()} PERGUNTA: "${userQuestion}"`
-      : `Dê um relatório tático geral para ${userName}.`
+      : `Dê uma mensagem motivacional CURTA de boas-vindas para ${userName} (máximo 25 palavras). Use o estilo: "E ai, ${userName}! [provocação sobre peso/objetivo]. Me pergunta qualquer coisa ou vamos criar uma cartilha?"`
 
     try {
       // Build messages array with conversation history
