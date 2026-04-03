@@ -61,7 +61,12 @@ export async function getAiSlogansAction(contexts: SloganContext[]) {
   return slogans as Record<SloganContext, string>
 }
 
-export async function getAiCoachAdviceAction(userQuestion?: string) {
+interface ConversationMessage {
+  role: "coach" | "user"
+  text: string
+}
+
+export async function getAiCoachAdviceAction(userQuestion?: string, conversationHistory?: ConversationMessage[]) {
   const session = await auth()
   if (!session?.user?.id) throw new Error("Unauthorized")
 
@@ -98,7 +103,7 @@ export async function getAiCoachAdviceAction(userQuestion?: string) {
 
   // Create coach instance with userId for tool calls
   const coachUseCase = new GetAiCoachAdviceUseCase(session.user.id)
-  return await coachUseCase.execute(userStats, history, userQuestion)
+  return await coachUseCase.execute(userStats, history, userQuestion, conversationHistory)
 }
 
 // Get welcome message for non-premium users
