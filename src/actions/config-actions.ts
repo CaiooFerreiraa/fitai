@@ -2,11 +2,8 @@
 
 import { auth } from "@/lib/auth"
 import prisma from "@/infrastructure/database/prisma"
-import { PrismaWorkoutRepository } from "@/infrastructure/repositories/prisma-workout-repository"
 import { WorkoutPlan, DayOfWeek } from "@/domain/entities/workout"
 import { revalidatePath } from "next/cache"
-
-const workoutRepo = new PrismaWorkoutRepository()
 
 export async function saveWorkoutPlanAction(plan: Omit<WorkoutPlan, "userId">, programId?: string) {
   const session = await auth()
@@ -127,12 +124,15 @@ export async function getMyWorkoutPlans(programId?: string) {
     include: { exercises: { orderBy: { order: "asc" } } },
   })
 
-  return plans.map((p: any) => ({
+  type PlanRow = (typeof plans)[number]
+  type ExerciseRow = PlanRow["exercises"][number]
+
+  return plans.map((p: PlanRow) => ({
     id: p.id,
     userId: p.userId,
     dayOfWeek: p.dayOfWeek,
     name: p.name || undefined,
-    exercises: p.exercises.map((e: any) => ({
+    exercises: p.exercises.map((e: ExerciseRow) => ({
       id: e.id,
       name: e.name,
       sets: e.sets,

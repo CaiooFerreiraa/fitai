@@ -4,9 +4,9 @@ import { signIn, signOut } from "@/lib/auth"
 import { prisma } from "@/infrastructure/database/prisma"
 import bcrypt from "bcryptjs"
 import { AuthError } from "next-auth"
-import { redirect } from "next/navigation"
 
-export async function loginAction(prevState: any, formData: FormData) {
+
+export async function loginAction(prevState: unknown, formData: FormData) {
   const email = formData.get("email") as string
   const password = formData.get("password") as string
 
@@ -37,7 +37,7 @@ export async function loginAction(prevState: any, formData: FormData) {
   }
 }
 
-export async function registerAction(prevState: any, formData: FormData) {
+export async function registerAction(prevState: unknown, formData: FormData) {
   const name = formData.get("name") as string
   const email = formData.get("email") as string
   const password = formData.get("password") as string
@@ -92,7 +92,7 @@ export async function registerAction(prevState: any, formData: FormData) {
     }
 
     return { success: true }
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (error instanceof Error && (error.message.includes("NEXT_REDIRECT") || error.message === "NEXT_REDIRECT")) {
       console.log("ACTION_DEBUG: Redirecting successfully")
       throw error

@@ -73,7 +73,7 @@ export default function AiCoachPage() {
       } else if ("success" in response && response.success) {
         setMessages(prev => [...prev, { role: "coach", text: response.text }])
       }
-    } catch (_error: unknown) {
+    } catch {
       toast.error("ERRO DE COMUNICAÇÃO", {
         description: "O COMANDO CENTRAL ESTÁ INSTÁVEL. TENTE NOVAMENTE."
       })
