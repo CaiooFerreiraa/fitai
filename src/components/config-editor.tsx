@@ -10,25 +10,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { saveWorkoutPlanAction, getMyWorkoutPlans, moveWorkoutPlanAction } from "@/actions/config-actions"
 import { toast } from "sonner"
 import {
-  Plus, Trash2, Save, Loader2, Dumbbell, Activity,
-  Clock, Sparkles, ListChecks, Target, Zap, ArrowLeft, ArrowRightLeft
+  Plus, Trash2, Save, Loader2, Activity,
+  Clock, ListChecks, Target, ArrowLeft, ArrowRightLeft
 } from "lucide-react"
 import Link from "next/link"
 import { MobileNav } from "@/components/mobile-nav"
 import { SiteIcon } from "@/components/ui/site-icon"
 
 export function ConfigEditor({ programId }: { programId?: string }) {
-  const [mounted, setMounted] = useState(false)
   const [dayOfWeek, setDayOfWeek] = useState<DayOfWeek>("MONDAY")
   const [exercises, setExercises] = useState<Exercise[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingDay, setLoadingDay] = useState(false)
   const [loadingMove, setLoadingMove] = useState(false)
   const [targetMoveDay, setTargetMoveDay] = useState<DayOfWeek | "">("")
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   const addExercise = () => {
     setExercises([...exercises, { name: "", sets: 3, reps: 10, timer: 60, order: exercises.length }])
@@ -50,7 +45,7 @@ export function ConfigEditor({ programId }: { programId?: string }) {
       setLoadingDay(true)
       try {
         const plans = await getMyWorkoutPlans(programId)
-        const existingPlan = plans.find((p: any) => p.dayOfWeek === dayOfWeek)
+        const existingPlan = plans.find((p: { dayOfWeek: string; exercises: Exercise[] }) => p.dayOfWeek === dayOfWeek)
         if (existingPlan && existingPlan.exercises.length > 0) {
           setExercises(existingPlan.exercises)
         } else {
@@ -63,7 +58,7 @@ export function ConfigEditor({ programId }: { programId?: string }) {
       }
     }
     loadDayWorkout()
-  }, [dayOfWeek])
+  }, [dayOfWeek, programId])
 
   const handleSave = async () => {
     if (exercises.length === 0) {

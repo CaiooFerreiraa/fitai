@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react"
 import { getAiCoachAdviceAction, getAiCoachWelcomeAction } from "@/actions/workout-actions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ChevronLeft, Zap, Send, Loader2, Target, ShieldAlert, Activity, Lock, Crown } from "lucide-react"
+import { ChevronLeft, Send, Loader2, ShieldAlert, Lock, Crown } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
 
@@ -15,7 +15,7 @@ interface Message {
 }
 
 export default function AiCoachPage() {
-  const { data: session } = useSession()
+  useSession()
   const [messages, setMessages] = useState<Message[]>([])
   const [inputValue, setInputValue] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -73,7 +73,7 @@ export default function AiCoachPage() {
       } else if ("success" in response && response.success) {
         setMessages(prev => [...prev, { role: "coach", text: response.text }])
       }
-    } catch (error: unknown) {
+    } catch (_error: unknown) {
       toast.error("ERRO DE COMUNICAÇÃO", {
         description: "O COMANDO CENTRAL ESTÁ INSTÁVEL. TENTE NOVAMENTE."
       })
