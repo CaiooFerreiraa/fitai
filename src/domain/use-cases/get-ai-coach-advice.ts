@@ -161,7 +161,6 @@ export class GetAiCoachAdviceUseCase {
 
     if (toolName === "generate_training_program") {
       try {
-        let healthRestrictions = args.health_restrictions as string || "nenhuma"
         
         let sessionTime = args.session_time as string || "60min"
         const validSessionTimes = ["30min", "45min", "60min", "mais de 1h"]

@@ -10,8 +10,24 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 
+interface WorkoutHistoryLog {
+  id: string
+  date: Date | string
+  exerciseLogs: {
+    id: string
+    weight: number
+    setsReached: number | null
+    repsReached: number | null
+    exercise: {
+      name: string
+      sets: number
+      reps: number
+    }
+  }[]
+}
+
 export default function HistoryPage() {
-  const [logs, setLogs] = useState<any[]>([])
+  const [logs, setLogs] = useState<WorkoutHistoryLog[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -131,7 +147,7 @@ export default function HistoryPage() {
                   </div>
 
                   <div className="space-y-4">
-                    {log.exerciseLogs.map((exLog: any, idx: number) => (
+                    {log.exerciseLogs.map((exLog, idx) => (
                       <div key={idx} className="flex items-center justify-between p-4 bg-black/40 border-2 border-[#1c1c1f] rounded-2xl hover:border-[#ff0033]/20 transition-all">
                         <div className="flex items-center gap-4">
                           <div className="text-[10px] font-black text-neutral-700 italic bg-black w-6 h-6 flex items-center justify-center rounded-lg border border-[#1c1c1f]">

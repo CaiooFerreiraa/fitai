@@ -1,13 +1,6 @@
 import groq from "@/lib/groq"
 import prisma from "@/infrastructure/database/prisma"
 
-interface UserProfile {
-  name: string | null
-  weight: number | null
-  height: number | null
-  goal: string | null
-}
-
 interface WorkoutDay {
   dayOfWeek: string
   name: string

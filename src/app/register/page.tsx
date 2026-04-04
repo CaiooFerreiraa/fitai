@@ -60,7 +60,7 @@ export default function RegisterPage() {
         <div className="hidden lg:flex flex-col justify-between p-12 xl:p-20">
           {/* Logo */}
           <div className="flex items-center gap-4">
-            <SiteIcon className="w-6 h-6 sm:w-8 sm:h-8" showBackground={true} />
+            <SiteIcon className="w-10 h-10 sm:w-12 sm:h-12" />
             <span className="text-2xl font-black italic tracking-tighter uppercase">
               FIT<span className="text-[#ff0033]">AI</span>
             </span>

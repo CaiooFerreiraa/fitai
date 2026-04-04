@@ -8,21 +8,27 @@ export async function loginAction(prevState: unknown, formData: FormData) {
   const email = formData.get("email") as string
   const password = formData.get("password") as string
 
-  console.log("LOGIN_ATTEMPT:", { email })
+  console.log("ACTION_DEBUG: Login attempt", { email, hasPassword: !!password })
 
   if (!email || !password) {
+    console.error("ACTION_DEBUG: Missing credentials")
     return { error: "DADOS INVÁLIDOS. NÃO TENTE ENGANAR O SISTEMA." }
   }
 
   try {
+    console.log("ACTION_DEBUG: Calling signIn")
     await signIn("credentials", {
       email,
       password,
       redirectTo: "/",
     })
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : String(error)
-    console.error("LOGIN_ERROR:", message)
+    if (error instanceof Error && error.message.includes("NEXT_REDIRECT")) {
+      console.log("ACTION_DEBUG: Redirecting...")
+      throw error
+    }
+    
+    console.error("ACTION_DEBUG: Login error", error)
     
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -32,7 +38,6 @@ export async function loginAction(prevState: unknown, formData: FormData) {
           return { error: "FALHA CRÍTICA NA AUTENTICAÇÃO. TENTE NOVAMENTE." }
       }
     }
-    // Rethrow to allow Next.js NEXT_REDIRECT to work
     throw error
   }
 }
@@ -45,7 +50,17 @@ export async function registerAction(prevState: unknown, formData: FormData) {
   const gender = formData.get("gender") as string
   const trainingTime = formData.get("trainingTime") as string
 
+  console.log("ACTION_DEBUG: Registration attempt", { name, email, gender, trainingTime })
+
   if (!name || !email || !password || !dateOfBirth || !gender || !trainingTime) {
+    console.error("ACTION_DEBUG: Missing registration fields", {
+      name: !!name,
+      email: !!email,
+      password: !!password,
+      dateOfBirth: !!dateOfBirth,
+      gender: !!gender,
+      trainingTime: !!trainingTime
+    })
     return { error: "CAMPOS INCOMPLETOS. O SISTEMA EXIGE DADOS TOTAIS." }
   }
 
@@ -53,15 +68,18 @@ export async function registerAction(prevState: unknown, formData: FormData) {
   const hashedPassword = await bcrypt.hash(password, 10)
 
   try {
+    console.log("ACTION_DEBUG: Checking for existing user")
     const existingUser = await prisma.user.findUnique({
       where: { email }
     })
 
     if (existingUser) {
+      console.error("ACTION_DEBUG: Email already registered")
       return { error: "EMAIL JÁ CADASTRADO. NÃO TENTE DUPLICAR IDENTIDADES." }
     }
 
-    await prisma.user.create({
+    console.log("ACTION_DEBUG: Creating user in database")
+    const newUser = await prisma.user.create({
       data: {
         name,
         email,
@@ -71,18 +89,31 @@ export async function registerAction(prevState: unknown, formData: FormData) {
         trainingTime,
       }
     })
+    console.log("ACTION_DEBUG: User created successfully", { id: newUser.id })
 
-    await signIn("credentials", {
-      email,
-      password,
-      redirectTo: "/",
-    })
-  } catch (error) {
-    if (error instanceof AuthError) {
-      return { error: "FALHA AO REGISTRAR. O SISTEMA REJEITOU SUA ENTRADA." }
+    console.log("ACTION_DEBUG: Signing in after registration")
+    try {
+      await signIn("credentials", {
+        email,
+        password,
+        redirectTo: "/",
+      })
+    } catch (error) {
+      if (error instanceof Error && error.message === "NEXT_REDIRECT") {
+        throw error
+      }
+      console.error("ACTION_DEBUG: SignIn error after registration:", error)
+      return { success: true, message: "Conta criada, mas o login automático falhou. Faça login manualmente." }
     }
-    // Rethrow to allow Next.js NEXT_REDIRECT to work
-    throw error
+
+    return { success: true }
+  } catch (error: any) {
+    if (error instanceof Error && (error.message.includes("NEXT_REDIRECT") || error.message === "NEXT_REDIRECT")) {
+      console.log("ACTION_DEBUG: Redirecting successfully")
+      throw error
+    }
+    console.error("ACTION_DEBUG: Registration critical error", error)
+    return { error: "ERRO CRÍTICO NO PROTOCOLO" }
   }
 }
 

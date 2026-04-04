@@ -62,9 +62,7 @@ export default function LoginPage() {
         <div className="hidden lg:flex flex-col justify-between p-12 xl:p-20">
           {/* Logo */}
           <div className="flex items-center gap-4">
-            <div className="bg-[#ff0033] p-3 rounded-2xl border-4 border-black shadow-[6px_6px_0_0_#000]">
-              <SiteIcon className="w-7 h-7 text-white" />
-            </div>
+            <SiteIcon className="w-10 h-10 sm:w-12 sm:h-12" />
             <span className="text-2xl font-black italic tracking-tighter uppercase">
               FIT<span className="text-[#ff0033]">AI</span>
             </span>

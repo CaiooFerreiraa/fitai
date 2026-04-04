@@ -29,7 +29,7 @@ export class PrismaLogRepository {
       take: 5
     })
     
-    return history.map((h: any) => ({
+    return history.map((h) => ({
       exerciseId: h.exerciseId,
       weight: h.weight,
       setsReached: h.setsReached ?? undefined,
@@ -37,7 +37,7 @@ export class PrismaLogRepository {
     }))
   }
 
-  async getGlobalHistory(userId: string): Promise<any[]> {
+  async getGlobalHistory(userId: string) {
     return await prisma.exerciseLog.findMany({
       where: { workoutLog: { userId } },
       orderBy: { createdAt: "desc" },

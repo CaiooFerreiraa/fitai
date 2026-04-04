@@ -1,5 +1,20 @@
 import prisma from "@/infrastructure/database/prisma"
-import { WorkoutPlan, Exercise } from "@/domain/entities/workout"
+import { WorkoutPlan } from "@/domain/entities/workout"
+
+interface PrismaWorkoutWithExercises {
+  id: string
+  userId: string
+  dayOfWeek: string
+  name: string | null
+  exercises: {
+    id: string
+    name: string
+    sets: number
+    reps: number
+    timer: number
+    order: number
+  }[]
+}
 
 export class PrismaWorkoutRepository {
   async findByUserId(userId: string): Promise<WorkoutPlan[]> {
@@ -9,14 +24,14 @@ export class PrismaWorkoutRepository {
         trainingProgramId: null, // Only standalone plans
       },
       include: { exercises: { orderBy: { order: "asc" } } },
-    })
+    }) as unknown as PrismaWorkoutWithExercises[]
 
-    return plans.map((p: any) => ({
+    return plans.map((p) => ({
       id: p.id,
       userId: p.userId,
       dayOfWeek: p.dayOfWeek,
       name: p.name || undefined,
-      exercises: p.exercises.map((e: any) => ({
+      exercises: p.exercises.map((e) => ({
         id: e.id,
         name: e.name,
         sets: e.sets,

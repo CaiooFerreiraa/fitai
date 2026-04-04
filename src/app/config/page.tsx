@@ -179,9 +179,7 @@ export default function ConfigPage() {
               </div>
             ) : exercises.length === 0 ? (
               <div className="bg-[#121214] border-4 border-dashed border-[#1c1c1f] rounded-3xl p-10 md:p-14 text-center group hover:border-[#ff0033]/20 transition-all relative overflow-hidden">
-                <div className="bg-black/60 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform border-4 border-black shadow-[6px_6px_0_0_#000]">
-                  <SiteIcon className="w-8 h-8" />
-                </div>
+                  <SiteIcon className="w-16 h-16" showBackground />
                 <h3 className="text-3xl font-black uppercase italic mb-2 tracking-tighter text-white">ARSENAL ZERADO.</h3>
                 <p className="text-neutral-700 font-black text-[9px] uppercase tracking-[0.4em] max-w-xs mx-auto italic">
                   NENHUM PROTOCOLO DETECTADO.
