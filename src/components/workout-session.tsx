@@ -199,7 +199,7 @@ export function WorkoutSession({ exercises }: { exercises: Exercise[] }) {
                 onChange={setWeight}
                 step={0.5}
                 min={0}
-                className="h-14 md:h-18 lg:h-24 w-full text-3xl md:text-5xl lg:text-6xl italic bg-black/60 border-2 border-black rounded-xl md:rounded-2xl focus:border-[#ff0033] shadow-[4px_4px_0_0_#000] transition-all"
+                className="h-16 md:h-20 lg:h-24 w-full text-4xl md:text-5xl lg:text-6xl italic bg-black/60 border-2 border-black rounded-xl md:rounded-2xl focus:border-[#ff0033] shadow-[4px_4px_0_0_#000] transition-all"
               />
             </div>
           </div>
@@ -208,7 +208,7 @@ export function WorkoutSession({ exercises }: { exercises: Exercise[] }) {
             <Button
               onClick={handleFinishSet}
               disabled={loading}
-              className="w-full h-14 md:h-18 lg:h-20 bg-[#ff0033] hover:bg-[#ff1100] text-white rounded-xl md:rounded-2xl font-black text-lg md:text-xl lg:text-2xl cursor-pointer uppercase italic transition-all shadow-[6px_6px_0_0_#000000] flex justify-between items-center px-6 md:px-10 active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-30 border-2 md:border-4 border-black group/btn relative overflow-hidden"
+              className="w-full h-16 md:h-20 bg-[#ff0033] hover:bg-[#ff1100] text-white rounded-xl md:rounded-2xl font-black text-lg md:text-xl lg:text-2xl cursor-pointer uppercase italic transition-all shadow-[6px_6px_0_0_#000000] flex justify-between items-center px-6 md:px-10 active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-30 border-2 md:border-4 border-black group/btn relative overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700" />
               {loading ? (
@@ -241,7 +241,7 @@ export function WorkoutSession({ exercises }: { exercises: Exercise[] }) {
 
               <Button
                 onClick={nextExercise}
-                className="w-full h-14 md:h-16 lg:h-18 bg-white hover:bg-neutral-100 text-black rounded-xl md:rounded-2xl font-black text-base md:text-xl lg:text-2xl cursor-pointer uppercase italic transition-all flex items-center justify-between px-6 md:px-10 border-2 md:border-4 border-black shadow-[6px_6px_0_0_#000] md:shadow-[10px_10px_0_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none group"
+                className="w-full h-16 md:h-20 bg-white hover:bg-neutral-100 text-black rounded-xl md:rounded-2xl font-black text-base md:text-xl lg:text-2xl cursor-pointer uppercase italic transition-all flex items-center justify-between px-6 md:px-10 border-2 md:border-4 border-black shadow-[6px_6px_0_0_#000] md:shadow-[10px_10px_0_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none group"
               >
                 <span className="leading-none tracking-tighter">
                   {currentIdx + 1 < exercises.length ? "PRÓXIMO PROTOCOLO" : "ENCERRAR MISSÃO"}

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { listTrainingProgramsAction, setActiveProgramAction, deleteProgramAction, generateTrainingProgramAction } from "@/actions/program-actions"
 import { DAY_LABELS_PT } from "@/domain/entities/workout"
 import { Button } from "@/components/ui/button"
-import { ChevronLeft, Loader2, Target, CheckCircle2, Trash2, Sparkles, Calendar, Dumbbell, ChevronDown, ChevronUp, Clock, Hash, AlertTriangle, X } from "lucide-react"
+import { ChevronLeft, Loader2, Target, CheckCircle2, Trash2, Sparkles, Calendar, Dumbbell, ChevronDown, ChevronUp, Clock, Hash, AlertTriangle, X, Edit2 } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
 
@@ -48,7 +48,7 @@ export default function ProgramsPage() {
     try {
       const data = await listTrainingProgramsAction()
       setPrograms(data)
-    } catch (error) {
+    } catch {
       toast.error("ERRO AO CARREGAR CARTILHAS")
     } finally {
       setLoading(false)
@@ -83,7 +83,7 @@ export default function ProgramsPage() {
       toast.success("CARTILHA ATIVADA", {
         description: "Treinos aplicados nos dias da semana."
       })
-    } catch (error) {
+    } catch {
       toast.error("ERRO AO ATIVAR CARTILHA")
     }
   }
@@ -102,7 +102,7 @@ export default function ProgramsPage() {
         description: "Programa de treino removido com sucesso."
       })
       await loadPrograms()
-    } catch (error) {
+    } catch {
       toast.error("ERRO AO DELETAR CARTILHA")
     } finally {
       setDeleteDialogOpen(false)
@@ -204,12 +204,20 @@ export default function ProgramsPage() {
                         </p>
                       )}
                     </div>
-                    <button
-                      onClick={() => handleDelete(program.id)}
-                      className="text-neutral-600 hover:text-[#ff0033] transition-colors cursor-pointer"
-                    >
-                      <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={3} />
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/programs/${program.id}/edit`}
+                        className="text-neutral-600 hover:text-white transition-colors cursor-pointer"
+                      >
+                        <Edit2 className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={3} />
+                      </Link>
+                      <button
+                        onClick={() => handleDelete(program.id)}
+                        className="text-neutral-600 hover:text-[#ff0033] transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" strokeWidth={3} />
+                      </button>
+                    </div>
                   </div>
 
                   <div className="flex flex-wrap gap-2">
@@ -239,7 +247,12 @@ export default function ProgramsPage() {
 
                   {expandedPrograms.has(program.id) && (
                     <div className="mt-3 sm:mt-4 space-y-2 sm:space-y-3">
-                      {program.workoutPlans.map((workout) => (
+                      {[...program.workoutPlans]
+                        .sort((a, b) => {
+                          const daysTemp = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+                          return daysTemp.indexOf(a.dayOfWeek) - daysTemp.indexOf(b.dayOfWeek);
+                        })
+                        .map((workout) => (
                         <div
                           key={workout.id}
                           className="bg-black/40 border border-white/5 rounded-xl p-3 sm:p-4 space-y-2 sm:space-y-3"

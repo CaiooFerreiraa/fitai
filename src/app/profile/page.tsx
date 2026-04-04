@@ -6,16 +6,34 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { NumberInput } from "@/components/ui/number-input"
 import { Label } from "@/components/ui/label"
-import { ChevronLeft, Save, Activity, Target, Sparkles, Scale, Ruler, Loader2, Calendar, Users, Dumbbell } from "lucide-react"
+import { ChevronLeft, Save, Activity, Target, Scale, Ruler, Loader2, Calendar, Users, Dumbbell } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { getAiSlogansAction } from "@/actions/workout-actions"
 import { MobileNav } from "@/components/mobile-nav"
 
+const FALLBACK_QUOTES = [
+  "VOCÊ É UM FRANGO DISFARÇADO OU UMA MÁQUINA DE COMBATE? RESPONDA COM PESO.",
+  "SEU CORPO É O ÚNICO TRIBUNAL QUE NÃO ACEITA SUBORNO. PAGUE COM SUOR.",
+  "A GRAVIDADE É UMA LEI. SUPERÁ-LA É SEU DEVER. NÃO SEJA UM FORAGIDO.",
+  "BEM-VINDO AO ABATEDOURO DE GORDURA. O FERRO NÃO TEM PIEDADE.",
+  "DESCULPAS NÃO QUEIMAM CALORIAS. CALA A BOCA E TREINA."
+]
+
+interface UserProfile {
+  name?: string | null
+  weight?: number | null
+  height?: number | null
+  goal?: string | null
+  dateOfBirth?: Date | string | null
+  gender?: string | null
+  trainingTime?: string | null
+}
+
 export default function ProfilePage() {
   const router = useRouter()
-  const [profile, setProfile] = useState<any>(null)
+  const [profile, setProfile] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [randomQuote, setRandomQuote] = useState("")
@@ -23,20 +41,12 @@ export default function ProfilePage() {
     profile_quote: "RECUPERANDO FIBRAS... PREPARE-SE."
   })
 
-  const quotes = [
-    "VOCÊ É UM FRANGO DISFARÇADO OU UMA MÁQUINA DE COMBATE? RESPONDA COM PESO.",
-    "SEU CORPO É O ÚNICO TRIBUNAL QUE NÃO ACEITA SUBORNO. PAGUE COM SUOR.",
-    "A GRAVIDADE É UMA LEI. SUPERÁ-LA É SEU DEVER. NÃO SEJA UM FORAGIDO.",
-    "BEM-VINDO AO ABATEDOURO DE GORDURA. O FERRO NÃO TEM PIEDADE.",
-    "DESCULPAS NÃO QUEIMAM CALORIAS. CALA A BOCA E TREINA."
-  ]
-
   useEffect(() => {
     getUserProfile().then(p => {
       if (!p) router.push("/login")
-      setProfile(p)
+      setProfile(p as UserProfile)
       setLoading(false)
-      setRandomQuote(quotes[Math.floor(Math.random() * quotes.length)])
+      setRandomQuote(FALLBACK_QUOTES[Math.floor(Math.random() * FALLBACK_QUOTES.length)])
       getAiSlogansAction(["profile_quote"]).then(setSlogans)
     })
   }, [router])

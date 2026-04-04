@@ -77,9 +77,9 @@ export function NumberInput({
         id={id}
         name={name}
         type="number"
-        value={value}
+        value={value === 0 ? "" : value}
         onChange={handleChange}
-        placeholder={placeholder}
+        placeholder={placeholder || (step === 0.5 ? "0.0" : "0")}
         className="w-full h-full bg-transparent text-center font-black text-white focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none cursor-text px-1 sm:px-4 italic tracking-tighter"
       />
 

@@ -11,8 +11,8 @@ import { NumberInput } from "@/components/ui/number-input"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import {
-  Loader2, ChevronRight, Settings,
-  User, Activity, Zap, Trophy, Check, X, BookOpen, Clock
+  Loader2, Settings,
+  User, Zap, Trophy, Check, X, BookOpen, Clock
 } from "lucide-react"
 import { SiteIcon } from "@/components/ui/site-icon"
 import Link from "next/link"

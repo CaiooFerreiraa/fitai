@@ -26,19 +26,22 @@ export default function AiCoachPage() {
   useEffect(() => {
     // Get welcome message - premium users get full AI, non-premium get motivational message
     getAiCoachAdviceAction().then(res => {
-      setMessages([{ role: "coach", text: res }])
-      setIsInitialLoading(false)
-      setIsPremium(true)
-    }).catch((error: Error) => {
-      if (error.message === "PREMIUM_REQUIRED") {
+      if ("error" in res && res.error === "PREMIUM_REQUIRED") {
         setIsPremium(false)
         // Get motivational welcome for non-premium
         getAiCoachWelcomeAction().then(msg => {
           setMessages([{ role: "coach", text: msg }])
+          setIsInitialLoading(false)
         })
+      } else if ("success" in res && res.success) {
+        setMessages([{ role: "coach", text: res.text }])
+        setIsInitialLoading(false)
+        setIsPremium(true)
       } else {
         setIsInitialLoading(false)
       }
+    }).catch(() => {
+      setIsInitialLoading(false)
     })
   }, [])
 
@@ -61,17 +64,19 @@ export default function AiCoachPage() {
       // Send conversation history along with the current question
       const conversationHistory = [...messages, newUserMessage]
       const response = await getAiCoachAdviceAction(userText, conversationHistory)
-      setMessages(prev => [...prev, { role: "coach", text: response }])
-    } catch (error: unknown) {
-      if (error instanceof Error && error.message === "PREMIUM_REQUIRED") {
-        toast.error("ACESSO NEGADO", {
-          description: "APENAS USUÁRIOS PREMIUM TÊM ACESSO À IA."
-        })
-      } else {
-        toast.error("ERRO DE COMUNICAÇÃO", {
-          description: "O COMANDO CENTRAL ESTÁ INSTÁVEL. TENTE NOVAMENTE."
-        })
+      if ("error" in response) {
+        if (response.error === "PREMIUM_REQUIRED") {
+          toast.error("ACESSO NEGADO", {
+            description: "APENAS USUÁRIOS PREMIUM TÊM ACESSO À IA."
+          })
+        }
+      } else if ("success" in response && response.success) {
+        setMessages(prev => [...prev, { role: "coach", text: response.text }])
       }
+    } catch (error: unknown) {
+      toast.error("ERRO DE COMUNICAÇÃO", {
+        description: "O COMANDO CENTRAL ESTÁ INSTÁVEL. TENTE NOVAMENTE."
+      })
     } finally {
       setIsLoading(false)
     }

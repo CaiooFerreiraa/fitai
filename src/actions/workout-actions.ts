@@ -71,12 +71,13 @@ export async function getAiCoachAdviceAction(userQuestion?: string, conversation
   if (!session?.user?.id) throw new Error("Unauthorized")
 
   // Check if user is premium
-  const user = await prisma.$queryRaw<Array<{isPremium: boolean}>>`
-    SELECT "isPremium" FROM "User" WHERE id = ${session.user.id}
-  `
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { isPremium: true }
+  })
 
-  if (!user[0]?.isPremium) {
-    throw new Error("PREMIUM_REQUIRED")
+  if (!user?.isPremium) {
+    return { error: "PREMIUM_REQUIRED" }
   }
 
   const profile = await getUserProfile()
@@ -103,7 +104,8 @@ export async function getAiCoachAdviceAction(userQuestion?: string, conversation
 
   // Create coach instance with userId for tool calls
   const coachUseCase = new GetAiCoachAdviceUseCase(session.user.id)
-  return await coachUseCase.execute(userStats, history, userQuestion, conversationHistory)
+  const text = await coachUseCase.execute(userStats, history, userQuestion, conversationHistory)
+  return { success: true, text }
 }
 
 // Get welcome message for non-premium users

@@ -2,10 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { getWorkoutHistory } from "@/actions/history-actions"
-import { SiteIcon } from "@/components/ui/site-icon"
 import { MobileNav } from "@/components/mobile-nav"
 import { 
-  Calendar, Clock, Dumbbell, History as HistoryIcon, 
+  Calendar, Clock, History as HistoryIcon, 
   ArrowLeft, Activity, Target, TrendingUp
 } from "lucide-react"
 import Link from "next/link"
@@ -56,8 +55,8 @@ export default function HistoryPage() {
       <div className="bg-watermark opacity-[0.01]" aria-hidden>HISTORY</div>
 
       {/* ── Header ── */}
-      <header className="relative z-30 sticky top-0 bg-[#0a0a0b]/90 backdrop-blur-2xl border-b-4 border-black shadow-[0_10px_40px_rgba(0,0,0,1)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 h-16 sm:h-20 flex items-center justify-between">
+      <header className="relative z-30 sticky top-0 bg-[#0a0a0b]/80 backdrop-blur-2xl border-b-2 border-black/50 z-50">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-8 lg:px-10 h-12 sm:h-14 lg:h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group cursor-pointer">
             <ArrowLeft className="w-5 h-5 text-neutral-600 group-hover:text-[#ff0033] group-hover:-translate-x-1 transition-all" strokeWidth={4}/>
             <span className="text-xs font-black uppercase tracking-[0.3em] italic text-neutral-500 group-hover:text-white transition-colors hidden sm:inline">BASE</span>
@@ -73,7 +72,7 @@ export default function HistoryPage() {
         </div>
       </header>
 
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 md:px-10 pt-6 sm:pt-10 md:pt-12 space-y-8">
+      <main className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 md:px-8 lg:px-10 pt-3 sm:pt-4 lg:pt-6 pb-20 lg:pb-6 space-y-6 sm:space-y-8">
         
         {/* ── Title ── */}
         <div className="flex flex-col gap-2">

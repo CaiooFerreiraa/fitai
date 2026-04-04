@@ -1,5 +1,5 @@
 import prisma from "@/infrastructure/database/prisma"
-import { getSession } from "next-auth/react"
+import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { WorkoutSession } from "@/components/workout-session"
 import { ArrowLeft, Target, ShieldCheck, Activity, Zap, Sparkles } from "lucide-react"
@@ -8,7 +8,7 @@ import { MobileNav } from "@/components/mobile-nav"
 
 export default async function WorkoutPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const session = await getSession()
+  const session = await auth()
   if (!session) redirect("/login")
 
   const plan = await prisma.workoutPlan.findUnique({
@@ -36,8 +36,8 @@ export default async function WorkoutPage({ params }: { params: Promise<{ id: st
       </div>
 
       {/* ── Header ── */}
-      <header className="relative z-20 sticky top-0 bg-[#0a0a0b]/90 backdrop-blur-2xl border-b-4 border-black shadow-[0_10px_40px_rgba(0,0,0,1)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 h-16 sm:h-20 flex items-center justify-between">
+      <header className="relative z-20 sticky top-0 bg-[#0a0a0b]/80 backdrop-blur-2xl border-b-2 border-black/50 z-50">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-8 lg:px-10 h-12 sm:h-14 lg:h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group cursor-pointer">
             <ArrowLeft className="w-4 h-4 text-neutral-600 group-hover:text-[#ff0033] group-hover:-translate-x-1 transition-all" strokeWidth={3} />
             <span className="text-sm font-black uppercase tracking-[0.3em] italic text-neutral-500 group-hover:text-white transition-colors">VOLTAR À BASE</span>
@@ -59,7 +59,7 @@ export default async function WorkoutPage({ params }: { params: Promise<{ id: st
         </div>
       </header>
 
-      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 md:px-10 pt-6 sm:pt-10 md:pt-16 pb-32 lg:pb-16 space-y-6 sm:space-y-10">
+      <main className="relative z-10 max-w-7xl mx-auto px-3 sm:px-4 md:px-8 lg:px-10 pt-3 sm:pt-4 lg:pt-6 pb-20 lg:pb-6 space-y-4 sm:space-y-6 lg:space-y-8">
 
         {/* ── Title ── */}
         <div>
@@ -73,15 +73,15 @@ export default async function WorkoutPage({ params }: { params: Promise<{ id: st
         </div>
 
         {/* ── Grid ── */}
-        <div className="grid grid-cols-1 xl:grid-cols-5 gap-6 sm:gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-10 items-start">
 
           {/* ── Session Component ── */}
-          <div className="xl:col-span-3">
+          <div className="lg:col-span-3 order-1">
             <WorkoutSession exercises={plan.exercises} />
           </div>
 
-          {/* ── Sidebar (desktop only) ── */}
-          <aside className="xl:col-span-2 hidden xl:flex flex-col gap-6 sticky top-28">
+          {/* ── Sidebar ── */}
+          <aside className="lg:col-span-2 flex flex-col gap-6 lg:sticky lg:top-28 order-2">
 
             {/* Mindset AI Card */}
             <div className="bg-[#121214] border-4 border-black p-8 md:p-10 rounded-[2rem] shadow-[10px_10px_0_0_#000] relative overflow-hidden group hover:border-[#ff0033]/30 transition-all">

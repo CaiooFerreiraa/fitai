@@ -377,6 +377,23 @@ Retorne APENAS um JSON válido (sem markdown, sem explicações extras):
 
       const program: TrainingProgramStructure = JSON.parse(jsonString)
       
+      const validDays = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"];
+      program.workouts = program.workouts.map((w, index) => {
+        let mappedDay = w.dayOfWeek?.toUpperCase() || "";
+        if (!validDays.includes(mappedDay)) {
+           if (mappedDay.includes("TERÇA") || mappedDay.includes("TERCA") || mappedDay.includes("TUES")) mappedDay = "TUESDAY";
+           else if (mappedDay.includes("QUARTA") || mappedDay.includes("WEDNESDAY")) mappedDay = "WEDNESDAY";
+           else if (mappedDay.includes("QUINTA") || mappedDay.includes("THURSDAY")) mappedDay = "THURSDAY";
+           else if (mappedDay.includes("SEXTA") || mappedDay.includes("FRIDAY")) mappedDay = "FRIDAY";
+           else if (mappedDay.includes("SÁBADO") || mappedDay.includes("SABADO") || mappedDay.includes("SATURDAY")) mappedDay = "SATURDAY";
+           else if (mappedDay.includes("DOMINGO") || mappedDay.includes("SUNDAY")) mappedDay = "SUNDAY";
+           else if (mappedDay.includes("SEGUNDA") || mappedDay.includes("MONDAY")) mappedDay = "MONDAY";
+           else mappedDay = validDays[index % validDays.length];
+        }
+        w.dayOfWeek = mappedDay;
+        return w;
+      });
+
       return program
     } catch (error: unknown) {
       console.error("AI_TRAINING_PROGRAM_ERROR:", error)
