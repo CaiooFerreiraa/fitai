@@ -11,9 +11,10 @@ import { saveWorkoutPlanAction, getMyWorkoutPlans } from "@/actions/config-actio
 import { toast } from "sonner"
 import {
   Plus, Trash2, Save, Loader2, Dumbbell, Activity,
-  Clock, Sparkles, ListChecks, Target, Zap, Home, Settings, User, ArrowLeft
+  Clock, Sparkles, ListChecks, Target, Zap, ArrowLeft
 } from "lucide-react"
 import Link from "next/link"
+import { MobileNav } from "@/components/mobile-nav"
 
 export default function ConfigPage() {
   const [dayOfWeek, setDayOfWeek] = useState<DayOfWeek>("MONDAY")
@@ -99,14 +100,17 @@ export default function ConfigPage() {
 
       {/* ── Header ── */}
       <header className="relative z-30 sticky top-0 bg-[#0a0a0b]/90 backdrop-blur-2xl border-b-4 border-black shadow-[0_10px_40px_rgba(0,0,0,1)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 h-16 sm:h-20 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group cursor-pointer">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 h-16 sm:h-20 flex items-center justify-between gap-2">
+          <Link href="/" className="flex items-center gap-2 group cursor-pointer shrink-0">
             <ArrowLeft className="w-5 h-5 text-neutral-600 group-hover:text-[#ff0033] group-hover:-translate-x-1 transition-all" strokeWidth={4}/>
-            <span className="text-xs font-black uppercase tracking-[0.3em] italic text-neutral-500 group-hover:text-white transition-colors">VOLTAR À BASE</span>
+            <span className="text-xs font-black uppercase tracking-[0.3em] italic text-neutral-500 group-hover:text-white transition-colors hidden sm:inline">VOLTAR À BASE</span>
           </Link>
-          <div className="hidden sm:flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-[#ff0033] animate-ping shadow-[0_0_8px_#ff0033]" />
-            <span className="text-[10px] font-black text-[#ff0033] uppercase tracking-[0.4em] italic">PLANEJAMENTO ESTRATÉGICO</span>
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-[#ff0033] animate-ping shadow-[0_0_8px_#ff0033]" />
+              <span className="text-[10px] font-black text-[#ff0033] uppercase tracking-[0.4em] italic whitespace-nowrap">PLANEJAMENTO</span>
+            </div>
+            <MobileNav />
           </div>
         </div>
       </header>
@@ -207,14 +211,14 @@ export default function ConfigPage() {
                       </Button>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2.5 sm:gap-4 md:gap-5 pt-3 sm:pt-4 border-t-2 border-black/50">
+                    <div className="flex flex-col sm:grid sm:grid-cols-3 gap-3 sm:gap-4 md:gap-5 pt-3 sm:pt-4 border-t-2 border-black/50">
                       {[
                         { label: "SÉRIES", icon: <Target size={10} className="sm:w-3 sm:h-3"/>, value: ex.sets, onChange: (val: number) => updateExercise(idx, { sets: val }), min: 1 },
                         { label: "REPS", icon: <Activity size={10} className="sm:w-3 sm:h-3"/>, value: ex.reps, onChange: (val: number) => updateExercise(idx, { reps: val }), min: 1 },
                         { label: "DESC. (S)", icon: <Clock size={10} className="sm:w-3 sm:h-3"/>, value: ex.timer, onChange: (val: number) => updateExercise(idx, { timer: val }), step: 5, min: 0 },
                       ].map((param) => (
-                        <div key={param.label} className="space-y-1 sm:space-y-1.5">
-                          <Label className="text-[6px] sm:text-[8px] font-black uppercase tracking-tight sm:tracking-widest text-[#ff0033] flex items-center gap-0.5 sm:gap-1 italic justify-center">
+                        <div key={param.label} className="space-y-1.5">
+                          <Label className="text-[9px] sm:text-[8px] font-black uppercase tracking-tight sm:tracking-widest text-[#ff0033] flex items-center gap-1 italic sm:justify-center">
                             {param.icon} <span>{param.label}</span>
                           </Label>
                           <NumberInput
@@ -222,7 +226,7 @@ export default function ConfigPage() {
                             onChange={param.onChange}
                             min={param.min}
                             step={param.step}
-                            className="h-9 sm:h-10 text-sm sm:text-xl italic rounded-lg sm:rounded-xl border-2 border-black bg-black/40 focus:border-[#ff0033] transition-all"
+                            className="h-10 sm:h-10 text-lg sm:text-xl italic rounded-lg sm:rounded-xl border-2 border-black bg-black/40 focus:border-[#ff0033] transition-all"
                           />
                         </div>
                       ))}
@@ -283,28 +287,6 @@ export default function ConfigPage() {
           </div>
         </div>
       </main>
-
-      {/* ── Bottom Nav — MOBILE ONLY ── */}
-      <nav className="bottom-nav lg:hidden" aria-label="Navegação">
-        <BottomNavLink href="/" icon={<Home size={18}/>} label="Home" />
-        <div className="w-px h-6 bg-[#1c1c1f]" />
-        <BottomNavLink href="/config" icon={<Settings size={18}/>} label="Config" active />
-        <div className="w-px h-6 bg-[#1c1c1f]" />
-        <BottomNavLink href="/profile" icon={<User size={18}/>} label="Perfil" />
-      </nav>
     </div>
-  )
-}
-
-function BottomNavLink({
-  href, icon, label, active
-}: { href: string; icon: React.ReactNode; label: string; active?: boolean }) {
-  return (
-    <Link href={href} className="flex-1 flex flex-col items-center gap-1 group">
-      <div className={`p-2.5 rounded-xl transition-all ${active ? "bg-[#ff0033] border-4 border-black shadow-[4px_4px_0_0_#000] text-white" : "text-neutral-600 hover:text-[#ff0033]"}`}>
-        {icon}
-      </div>
-      <span className={`text-[8px] font-black uppercase tracking-widest italic transition-colors ${active ? "text-[#ff0033]" : "text-neutral-700 group-hover:text-[#ff0033]"}`}>{label}</span>
-    </Link>
   )
 }

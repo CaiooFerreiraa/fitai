@@ -90,7 +90,7 @@ export default function LoginPage() {
         </div>
 
         {/* ── RIGHT: Form Panel ── */}
-        <div className="flex flex-col items-center justify-center p-5 sm:p-8 lg:p-12 xl:p-16 bg-[#0a0a0b] lg:bg-[#0d0d0f] lg:border-l-4 lg:border-black">
+        <div className="flex flex-col items-center justify-center p-5 sm:p-8 lg:p-12 xl:p-16 bg-[#0a0a0b] lg:bg-[#0d0d0f] lg:border-l-4 lg:border-black pb-28 sm:pb-10">
 
           {/* Mobile logo */}
           <div className="lg:hidden mb-8 text-center">
@@ -181,7 +181,7 @@ export default function LoginPage() {
             </form>
 
             {/* Register link */}
-            <div className="text-center space-y-2 pt-2">
+            <div className="text-center space-y-2 pt-2 sm:relative sm:block fixed bottom-12 sm:bottom-0 left-0 right-0 bg-[#0a0a0b]/95 backdrop-blur-xl border-t-2 border-black p-4 sm:p-0 sm:bg-transparent sm:backdrop-blur-none sm:border-t-0 z-50">
               <p className="text-[10px] font-black text-neutral-700 uppercase tracking-[0.3em] italic">
                 [ AINDA FRANGO? ]
               </p>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useSession, signOut } from "next-auth/react"
+import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { getMyWorkoutPlans } from "@/actions/config-actions"
@@ -12,10 +12,12 @@ import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import {
   Loader2, Dumbbell, ChevronRight, Settings,
-  User, LogOut, Activity, Zap, Trophy, Check, X, BookOpen
+  User, Activity, Zap, Trophy, Check, X, BookOpen
 } from "lucide-react"
 import Link from "next/link"
 import { getAiSlogansAction } from "@/actions/workout-actions"
+import { MobileNav } from "@/components/mobile-nav"
+import { LogoutButton } from "@/components/logout-button"
 
 const DAY_LABELS: Record<DayOfWeek, string> = {
   MONDAY:    "SEG",
@@ -120,18 +122,12 @@ export default function HomePage() {
                 {firstName}
               </span>
             </div>
-            <div className="hidden md:flex items-center gap-1.5">
+            <div className="hidden lg:flex items-center gap-1.5">
               <HeaderNavBtn href="/config"><Settings className="w-3.5 h-3.5" strokeWidth={3} /></HeaderNavBtn>
               <HeaderNavBtn href="/profile"><User className="w-3.5 h-3.5" strokeWidth={3} /></HeaderNavBtn>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => signOut()}
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-[#121214] border-2 border-black hover:border-[#ff0033]/60 cursor-pointer transition-all shadow-[3px_3px_0_0_#000]"
-            >
-              <LogOut className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-neutral-400" strokeWidth={3} />
-            </Button>
+            <MobileNav />
+            <LogoutButton />
           </div>
         </div>
       </header>
@@ -325,14 +321,6 @@ export default function HomePage() {
           </div>
         </div>
       </main>
-
-      <nav className="bottom-nav lg:hidden" aria-label="Navegação móvel">
-        <BottomNavLink href="/" icon={<Activity size={18}/>} label="Home" active />
-        <div className="w-px h-6 bg-[#1c1c1f]" />
-        <BottomNavLink href="/config" icon={<Settings size={18}/>} label="Config" />
-        <div className="w-px h-6 bg-[#1c1c1f]" />
-        <BottomNavLink href="/profile" icon={<User size={18}/>} label="Perfil" />
-      </nav>
     </div>
   )
 }
@@ -354,22 +342,6 @@ function QuickLink({ href, icon, label }: { href: string; icon: React.ReactNode;
         {icon}
         <span className="text-[7px] font-black uppercase tracking-widest italic">{label}</span>
       </div>
-    </Link>
-  )
-}
-
-function BottomNavLink({
-  href, icon, label, active
-}: { href: string; icon: React.ReactNode; label: string; active?: boolean }) {
-  return (
-    <Link href={href} className="flex-1 flex flex-col items-center gap-1 group">
-      <div className={cn(
-        "p-2.5 rounded-xl transition-all",
-        active ? "bg-[#ff0033] border-4 border-black shadow-[4px_4px_0_0_#000] text-white" : "text-neutral-600 hover:text-[#ff0033]"
-      )}>
-        {icon}
-      </div>
-      <span className={cn("text-[8px] font-black uppercase italic tracking-widest", active ? "text-[#ff0033]" : "text-neutral-700")}>{label}</span>
     </Link>
   )
 }

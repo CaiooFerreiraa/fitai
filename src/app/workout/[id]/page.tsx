@@ -2,8 +2,9 @@ import prisma from "@/infrastructure/database/prisma"
 import { auth } from "@/lib/auth"
 import { redirect } from "next/navigation"
 import { WorkoutSession } from "@/components/workout-session"
-import { ArrowLeft, Target, ShieldCheck, Activity, Zap, Sparkles, Home, Settings, User } from "lucide-react"
+import { ArrowLeft, Target, ShieldCheck, Activity, Zap, Sparkles } from "lucide-react"
 import Link from "next/link"
+import { MobileNav } from "@/components/mobile-nav"
 
 export default async function WorkoutPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -53,6 +54,7 @@ export default async function WorkoutPage({ params }: { params: Promise<{ id: st
               <ShieldCheck className="w-4 h-4 text-[#ff0033]" strokeWidth={3} />
               <span className="text-[10px] font-black uppercase italic text-neutral-400 tracking-[0.2em]">{plan.dayOfWeek}</span>
             </div>
+            <MobileNav />
           </div>
         </div>
       </header>
@@ -150,28 +152,6 @@ export default async function WorkoutPage({ params }: { params: Promise<{ id: st
           </aside>
         </div>
       </main>
-
-      {/* ── Bottom Nav ── */}
-      <nav className="bottom-nav lg:hidden" aria-label="Navegação">
-        <BottomNavLink href="/" icon={<Home className="w-5 h-5" strokeWidth={3} />} label="Home" />
-        <div className="w-px h-8 bg-[#1c1c1f]" />
-        <BottomNavLink href="/config" icon={<Settings className="w-5 h-5 group-hover:rotate-90 transition-transform" strokeWidth={3} />} label="Config" />
-        <div className="w-px h-8 bg-[#1c1c1f]" />
-        <BottomNavLink href="/profile" icon={<User className="w-5 h-5" strokeWidth={3} />} label="Perfil" />
-      </nav>
     </div>
-  )
-}
-
-function BottomNavLink({
-  href, icon, label, active
-}: { href: string; icon: React.ReactNode; label: string; active?: boolean }) {
-  return (
-    <Link href={href} className="flex-1 flex flex-col items-center gap-1 group cursor-pointer">
-      <div className={`p-3 rounded-2xl transition-all ${active ? "bg-[#ff0033] border-4 border-black shadow-[4px_4px_0_0_#000] text-white" : "text-neutral-600 hover:text-[#ff0033]"}`}>
-        {icon}
-      </div>
-      <span className={`text-[8px] font-black uppercase tracking-widest italic transition-colors ${active ? "text-[#ff0033]" : "text-neutral-700 group-hover:text-[#ff0033]"}`}>{label}</span>
-    </Link>
   )
 }

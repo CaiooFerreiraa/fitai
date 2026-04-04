@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { NumberInput } from "@/components/ui/number-input"
 import { Label } from "@/components/ui/label"
-import { ChevronLeft, Save, Activity, Target, Sparkles, Scale, Ruler, Settings, User, Home, Loader2, Calendar, Users, Dumbbell } from "lucide-react"
+import { ChevronLeft, Save, Activity, Target, Sparkles, Scale, Ruler, Loader2, Calendar, Users, Dumbbell } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { getAiSlogansAction } from "@/actions/workout-actions"
+import { MobileNav } from "@/components/mobile-nav"
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -90,10 +91,13 @@ export default function ProfilePage() {
             <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-neutral-600 group-hover:text-[#ff0033] group-hover:-translate-x-1 transition-all" strokeWidth={3} />
             <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.2em] italic text-neutral-500 group-hover:text-white transition-colors">VOLTAR À BASE</span>
           </Link>
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-[#ff0033] animate-ping" />
-            <span className="text-[8px] sm:text-[9px] font-black text-[#ff0033] uppercase tracking-[0.3em] italic hidden xs:inline">REGISTRO BIOMÉTRICO</span>
-            <span className="text-[8px] sm:text-[9px] font-black text-[#ff0033] uppercase tracking-[0.3em] italic xs:hidden">BIO-ID</span>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className="w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-[#ff0033] animate-ping" />
+              <span className="text-[8px] sm:text-[9px] font-black text-[#ff0033] uppercase tracking-[0.3em] italic hidden xs:inline">REGISTRO BIOMÉTRICO</span>
+              <span className="text-[8px] sm:text-[9px] font-black text-[#ff0033] uppercase tracking-[0.3em] italic xs:hidden">BIO-ID</span>
+            </div>
+            <MobileNav />
           </div>
         </div>
       </header>
@@ -310,27 +314,6 @@ export default function ProfilePage() {
           </div>
         </form>
       </main>
-
-      <nav className="bottom-nav lg:hidden" aria-label="Navegação">
-        <BottomNavLink href="/" icon={<Home className="w-5 h-5" strokeWidth={3} />} label="Home" />
-        <div className="w-px h-8 bg-[#1c1c1f]" />
-        <BottomNavLink href="/config" icon={<Settings className="w-5 h-5 group-hover:rotate-90 transition-transform" strokeWidth={3} />} label="Config" />
-        <div className="w-px h-8 bg-[#1c1c1f]" />
-        <BottomNavLink href="/profile" icon={<User className="w-5 h-5" strokeWidth={3} />} label="Perfil" active />
-      </nav>
     </div>
-  )
-}
-
-function BottomNavLink({
-  href, icon, label, active
-}: { href: string; icon: React.ReactNode; label: string; active?: boolean }) {
-  return (
-    <Link href={href} className="flex-1 flex flex-col items-center gap-1 group cursor-pointer">
-      <div className={`p-3 rounded-2xl transition-all ${active ? "bg-[#ff0033] border-4 border-black shadow-[4px_4px_0_0_#000] text-white" : "text-neutral-600 hover:text-[#ff0033]"}`}>
-        {icon}
-      </div>
-      <span className={`text-[8px] font-black uppercase tracking-widest italic transition-colors ${active ? "text-[#ff0033]" : "text-neutral-700 group-hover:text-[#ff0033]"}`}>{label}</span>
-    </Link>
   )
 }
