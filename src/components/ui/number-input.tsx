@@ -62,15 +62,15 @@ export function NumberInput({
 
   return (
     <div className={cn(
-      "group flex items-center bg-[var(--background)] border-2 border-[var(--border)] focus-within:border-[var(--primary)] rounded-2xl overflow-hidden transition-all shadow-[4px_4px_0_0_#000000] focus-within:shadow-[4px_4px_0_0_#ff003322]",
+      "group flex items-center bg-[var(--background)] border-2 border-[var(--border)] focus-within:border-[var(--primary)] rounded-2xl overflow-hidden transition-all shadow-[3px_3px_0_0_#000000] sm:shadow-[4px_4px_0_0_#000000] focus-within:shadow-[3px_3px_0_0_#ff003322] sm:focus-within:shadow-[4px_4px_0_0_#ff003322]",
       className
     )}>
       <button
         type="button"
         onClick={decrement}
-        className="h-full px-4 md:px-5 flex items-center justify-center bg-[var(--surface)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition-all cursor-pointer border-r-2 border-[var(--border)] active:translate-y-0.5 active:shadow-inner shrink-0"
+        className="h-full px-2.5 sm:px-5 flex items-center justify-center bg-[var(--surface)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition-all cursor-pointer border-r border-[var(--border)] active:translate-y-0.5 active:shadow-inner shrink-0 min-w-[32px] sm:min-w-[44px]"
       >
-        <Minus className="w-5 h-5" strokeWidth={5} />
+        <Minus className="w-3.5 h-3.5 sm:w-5 sm:h-5" strokeWidth={5} />
       </button>
       
       <input
@@ -80,15 +80,15 @@ export function NumberInput({
         value={value}
         onChange={handleChange}
         placeholder={placeholder}
-        className="w-full h-full bg-transparent text-center font-black text-white focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none cursor-text px-4 italic tracking-tighter"
+        className="w-full h-full bg-transparent text-center font-black text-white focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none cursor-text px-1 sm:px-4 italic tracking-tighter"
       />
 
       <button
         type="button"
         onClick={increment}
-        className="h-full px-4 md:px-5 flex items-center justify-center bg-[var(--surface)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition-all cursor-pointer border-l-2 border-[var(--border)] active:translate-y-0.5 active:shadow-inner shrink-0"
+        className="h-full px-2.5 sm:px-5 flex items-center justify-center bg-[var(--surface)] text-[var(--primary)] hover:bg-[var(--primary)] hover:text-white transition-all cursor-pointer border-l border-[var(--border)] active:translate-y-0.5 active:shadow-inner shrink-0 min-w-[32px] sm:min-w-[44px]"
       >
-        <Plus className="w-5 h-5" strokeWidth={5} />
+        <Plus className="w-3.5 h-3.5 sm:w-5 sm:h-5" strokeWidth={5} />
       </button>
     </div>
   )

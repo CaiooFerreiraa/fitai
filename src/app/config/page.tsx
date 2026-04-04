@@ -116,14 +116,14 @@ export default function ConfigPage() {
         {/* ── Title + Day Selector ── */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 md:gap-8">
           <div>
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-black uppercase tracking-tighter italic leading-none text-white">
+            <h1 className="text-3xl sm:text-5xl md:text-7xl font-black uppercase tracking-tighter italic leading-none text-white">
               MISSÃO<br />
               <span className="text-[#ff0033]">SEMANAL.</span>
             </h1>
           </div>
 
           {/* Day Selector */}
-          <div className="w-full lg:max-w-sm bg-[#121214] border-4 border-black p-4 sm:p-5 rounded-2xl shadow-[6px_6px_0_0_#000] relative overflow-hidden">
+          <div className="w-full lg:max-w-sm bg-[#121214] border-4 border-black p-3 sm:p-5 rounded-2xl shadow-[6px_6px_0_0_#000] relative overflow-hidden">
             <Label className="text-[10px] font-black uppercase tracking-[0.4em] text-neutral-600 block mb-3 italic">JANELA DE EXECUÇÃO TÁTICA</Label>
             <Select value={dayOfWeek} onValueChange={(val: DayOfWeek) => setDayOfWeek(val)}>
               <SelectTrigger className="h-12 sm:h-14 bg-black/60 border-2 border-[#1c1c1f] focus:border-[#ff0033] focus:ring-0 text-sm sm:text-base font-black uppercase tracking-tight rounded-xl cursor-pointer px-4 sm:px-5 italic transition-all">
@@ -156,8 +156,8 @@ export default function ConfigPage() {
                 <div className="w-2 h-2 bg-[#ff0033] rounded-full animate-pulse shadow-[0_0_10px_#ff0033]" />
                 <h2 className="text-[10px] font-black uppercase tracking-[0.4em] italic text-neutral-500">SEQUÊNCIA DE COMBATE</h2>
               </div>
-              <div className="bg-[#121214] px-4 py-1.5 rounded-full border-2 border-black flex items-center gap-2 shadow-[4px_4px_0_0_#000]">
-                <ListChecks className="w-3.5 h-3.5 text-[#ff0033]" strokeWidth={4} />
+              <div className="bg-[#121214] px-3 sm:px-4 py-1.5 rounded-full border-2 border-black flex items-center gap-1.5 sm:gap-2 shadow-[4px_4px_0_0_#000]">
+                <ListChecks className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#ff0033]" strokeWidth={4} />
                 <span className="text-[9px] font-black italic tracking-[0.3em] uppercase">{exercises.length} PROTOCOLOS</span>
               </div>
             </div>
@@ -182,10 +182,10 @@ export default function ConfigPage() {
                 {exercises.map((ex, idx) => (
                   <div
                     key={idx}
-                    className="bg-[#121214] border-4 border-black rounded-2xl sm:rounded-3xl p-4 sm:p-7 hover:border-[#ff0033]/20 transition-all shadow-[6px_6px_0_0_#000] group/card animate-in fade-in slide-in-from-top-4 duration-500"
+                    className="bg-[#121214] border-4 border-black rounded-2xl sm:rounded-3xl p-3 sm:p-6 md:p-7 hover:border-[#ff0033]/20 transition-all shadow-[6px_6px_0_0_#000] group/card animate-in fade-in slide-in-from-top-4 duration-500"
                   >
                     <div className="flex items-start gap-2 sm:gap-4 mb-4 sm:mb-5">
-                      <div className="bg-[#ff0033] text-white w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-lg sm:text-xl font-black italic shrink-0 shadow-[4px_4px_0_0_#000] border-4 border-black">
+                      <div className="bg-[#ff0033] text-white w-7 h-7 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-base sm:text-xl font-black italic shrink-0 shadow-[4px_4px_0_0_#000] border-4 border-black">
                         {idx + 1}
                       </div>
                       <div className="flex-1 space-y-2">
@@ -194,35 +194,35 @@ export default function ConfigPage() {
                           placeholder="EX: SUPINO RETO"
                           value={ex.name}
                           onChange={(e) => updateExercise(idx, { name: e.target.value })}
-                          className="h-10 sm:h-12 bg-black/50 border-4 border-black focus:border-[#ff0033] focus-visible:ring-0 text-sm sm:text-base font-black uppercase tracking-tight rounded-xl px-3 sm:px-4 italic transition-all"
+                          className="h-9 sm:h-12 bg-black/50 border-4 border-black focus:border-[#ff0033] focus-visible:ring-0 text-sm sm:text-base font-black uppercase tracking-tight rounded-xl px-3 sm:px-4 italic transition-all"
                         />
                       </div>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => removeExercise(idx)}
-                        className="w-8 h-8 sm:w-10 sm:h-10 mt-6 shrink-0 bg-[#0a0a0b] text-neutral-800 hover:text-[#ff0033] border-4 border-black rounded-xl transition-all shadow-[4px_4px_0_0_#000]"
+                        className="w-7 h-7 sm:w-10 sm:h-10 mt-6 shrink-0 bg-[#0a0a0b] text-neutral-800 hover:text-[#ff0033] border-4 border-black rounded-xl transition-all shadow-[4px_4px_0_0_#000]"
                       >
-                        <Trash2 size={14} className="sm:w-4 sm:h-4" strokeWidth={4} />
+                        <Trash2 size={12} className="sm:w-4 sm:h-4" strokeWidth={4} />
                       </Button>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2 sm:gap-5 pt-3 sm:pt-4 border-t-2 border-black/50">
+                    <div className="grid grid-cols-3 gap-2.5 sm:gap-4 md:gap-5 pt-3 sm:pt-4 border-t-2 border-black/50">
                       {[
                         { label: "SÉRIES", icon: <Target size={10} className="sm:w-3 sm:h-3"/>, value: ex.sets, onChange: (val: number) => updateExercise(idx, { sets: val }), min: 1 },
                         { label: "REPS", icon: <Activity size={10} className="sm:w-3 sm:h-3"/>, value: ex.reps, onChange: (val: number) => updateExercise(idx, { reps: val }), min: 1 },
                         { label: "DESC. (S)", icon: <Clock size={10} className="sm:w-3 sm:h-3"/>, value: ex.timer, onChange: (val: number) => updateExercise(idx, { timer: val }), step: 5, min: 0 },
                       ].map((param) => (
                         <div key={param.label} className="space-y-1 sm:space-y-1.5">
-                          <Label className="text-[7px] sm:text-[8px] font-black uppercase tracking-widest text-[#ff0033] flex items-center gap-1 italic">
-                            {param.icon} <span className="hidden xs:inline">{param.label}</span>
+                          <Label className="text-[6px] sm:text-[8px] font-black uppercase tracking-tight sm:tracking-widest text-[#ff0033] flex items-center gap-0.5 sm:gap-1 italic justify-center">
+                            {param.icon} <span>{param.label}</span>
                           </Label>
                           <NumberInput
                             value={param.value}
                             onChange={param.onChange}
                             min={param.min}
                             step={param.step}
-                            className="h-9 sm:h-10 text-lg sm:text-xl italic rounded-xl border-2 border-black bg-black/40 focus:border-[#ff0033] transition-all"
+                            className="h-9 sm:h-10 text-sm sm:text-xl italic rounded-lg sm:rounded-xl border-2 border-black bg-black/40 focus:border-[#ff0033] transition-all"
                           />
                         </div>
                       ))}
