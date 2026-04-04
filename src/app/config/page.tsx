@@ -15,12 +15,18 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { MobileNav } from "@/components/mobile-nav"
+import { SiteIcon } from "@/components/ui/site-icon"
 
 export default function ConfigPage() {
+  const [mounted, setMounted] = useState(false)
   const [dayOfWeek, setDayOfWeek] = useState<DayOfWeek>("MONDAY")
   const [exercises, setExercises] = useState<Exercise[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingDay, setLoadingDay] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const addExercise = () => {
     setExercises([...exercises, { name: "", sets: 3, reps: 10, timer: 60, order: exercises.length }])
@@ -174,7 +180,7 @@ export default function ConfigPage() {
             ) : exercises.length === 0 ? (
               <div className="bg-[#121214] border-4 border-dashed border-[#1c1c1f] rounded-3xl p-10 md:p-14 text-center group hover:border-[#ff0033]/20 transition-all relative overflow-hidden">
                 <div className="bg-black/60 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform border-4 border-black shadow-[6px_6px_0_0_#000]">
-                  <Dumbbell className="w-8 h-8 text-neutral-800" strokeWidth={4} />
+                  <SiteIcon className="w-8 h-8" />
                 </div>
                 <h3 className="text-3xl font-black uppercase italic mb-2 tracking-tighter text-white">ARSENAL ZERADO.</h3>
                 <p className="text-neutral-700 font-black text-[9px] uppercase tracking-[0.4em] max-w-xs mx-auto italic">
@@ -251,9 +257,7 @@ export default function ConfigPage() {
             <div className="bg-[#121214] border-4 border-black p-6 md:p-8 rounded-3xl shadow-[8px_8px_0_0_#000] relative overflow-hidden group hover:border-[#ff0033]/20 transition-all">
               <div className="relative z-10 space-y-6">
                 <div className="flex items-center gap-4">
-                  <div className="bg-[#ff0033] p-3 rounded-xl border-2 border-black">
-                    <Sparkles size={20} className="text-white" strokeWidth={4} />
-                  </div>
+                  <SiteIcon className="w-5 h-5" showBackground={true} />
                   <div>
                     <p className="text-[10px] font-black text-neutral-600 uppercase tracking-[0.4em] italic">MOD. LOGÍSTICO IA</p>
                     <span className="font-black italic text-lg uppercase text-white">CHIEF COACH</span>

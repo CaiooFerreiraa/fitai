@@ -1,5 +1,5 @@
 import prisma from "@/infrastructure/database/prisma"
-import { auth } from "@/lib/auth"
+import { getSession } from "next-auth/react"
 import { redirect } from "next/navigation"
 import { WorkoutSession } from "@/components/workout-session"
 import { ArrowLeft, Target, ShieldCheck, Activity, Zap, Sparkles } from "lucide-react"
@@ -8,7 +8,7 @@ import { MobileNav } from "@/components/mobile-nav"
 
 export default async function WorkoutPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const session = await auth()
+  const session = await getSession()
   if (!session) redirect("/login")
 
   const plan = await prisma.workoutPlan.findUnique({

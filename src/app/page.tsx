@@ -11,13 +11,15 @@ import { NumberInput } from "@/components/ui/number-input"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import {
-  Loader2, Dumbbell, ChevronRight, Settings,
-  User, Activity, Zap, Trophy, Check, X, BookOpen
+  Loader2, ChevronRight, Settings,
+  User, Activity, Zap, Trophy, Check, X, BookOpen, Clock
 } from "lucide-react"
+import { SiteIcon } from "@/components/ui/site-icon"
 import Link from "next/link"
 import { getAiSlogansAction } from "@/actions/workout-actions"
 import { MobileNav } from "@/components/mobile-nav"
 import { LogoutButton } from "@/components/logout-button"
+import { cn } from "@/lib/utils"
 
 const DAY_LABELS: Record<DayOfWeek, string> = {
   MONDAY:    "SEG",
@@ -44,6 +46,17 @@ export default function HomePage() {
     home_subtitle: "ODIE A MEDIOCRIDADE. O PROTOCOLO FOI CARREGADO.",
     home_workout_day: "PROTOCOLO ATIVO"
   })
+
+  // Hydration-safe date handling
+  const [activeDay, setActiveDay] = useState<DayOfWeek | null>(null)
+  const [todayStr, setTodayStr] = useState<DayOfWeek | null>(null)
+
+  useEffect(() => {
+    const today = new Date()
+    const currentDayStr = Object.keys(DAY_LABELS)[(today.getDay() + 6) % 7] as DayOfWeek
+    setTodayStr(currentDayStr)
+    setActiveDay(selectedDay || currentDayStr)
+  }, [selectedDay])
 
   useEffect(() => {
     if (status === "unauthenticated") router.push("/login")
@@ -72,9 +85,9 @@ export default function HomePage() {
 
   if (!session) return null
 
-  const today = new Date()
-  const todayStr = Object.keys(DAY_LABELS)[(today.getDay() + 6) % 7] as DayOfWeek
-  const activeDay = selectedDay || todayStr
+
+  const currentDisplayDay = activeDay || "MONDAY" // Fallback for SSR
+  const currentTodayStr = todayStr || "MONDAY"
   const activePlan = plans.find(p => p.dayOfWeek === activeDay)
   const firstName = session.user?.name?.split(" ")[0] || "RECRUTA"
 
@@ -107,9 +120,7 @@ export default function HomePage() {
       <header className="relative z-30 sticky top-0 bg-[#0a0a0b]/80 backdrop-blur-2xl border-b-2 border-black/50">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-8 lg:px-10 h-12 sm:h-14 lg:h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-1.5 sm:gap-2 group cursor-pointer">
-            <div className="bg-[#ff0033] p-1 sm:p-1.5 rounded-lg border-2 border-black shadow-[3px_3px_0_0_#000]">
-              <Dumbbell className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" strokeWidth={4} />
-            </div>
+            <SiteIcon className="w-7 h-7 sm:w-8 sm:h-8" showBackground={true} />
             <span className="text-base sm:text-lg md:text-xl font-black tracking-tighter uppercase italic">
               FIT<span className="text-[#ff0033]">AI</span>
             </span>
@@ -184,12 +195,12 @@ export default function HomePage() {
                   <div className="relative z-10 space-y-3 sm:space-y-4 lg:space-y-3">
                     <div>
                       <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.3em] text-white/40 italic">
-                        {slogans.home_workout_day} {activeDay === todayStr && "· HOJE"}
+                        {slogans.home_workout_day} {currentDisplayDay === currentTodayStr && "· HOJE"}
                       </span>
                       <h3 className="text-xl sm:text-2xl lg:text-3xl font-black italic uppercase tracking-tighter leading-none text-white mt-0.5 sm:mt-1">
                         {activePlan ? (
                           <>
-                            {DAY_LABELS[activeDay]}<span className="text-white/30">.</span><br />
+                            {DAY_LABELS[currentDisplayDay]}<span className="text-white/30">.</span><br />
                             <span className="text-[9px] sm:text-[10px] lg:text-xs text-white/70 block mt-0.5 sm:mt-1 tracking-[0.2em]">{activePlan.name}</span>
                           </>
                         ) : (
@@ -197,10 +208,10 @@ export default function HomePage() {
                         )}
                       </h3>
                     </div>
-                    <Button className="h-9 sm:h-10 lg:h-10 px-4 sm:px-6 bg-white hover:bg-neutral-100 text-black rounded-lg sm:rounded-xl font-black text-xs lg:text-sm border-2 lg:border-2 border-black shadow-[3px_3px_0_0_#000] sm:shadow-[4px_4px_0_0_#000] flex items-center justify-between gap-3 sm:gap-4 pointer-events-none">
+                    <div className="inline-flex items-center justify-center w-full sm:w-auto h-9 sm:h-11 px-6 sm:px-10 border-2 border-black bg-white hover:bg-neutral-100 text-black font-black text-xs sm:text-sm tracking-widest shadow-[4px_4px_0_0_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none transition-all">
                       {activePlan ? "INICIAR SESSÃO" : "MONTAR AGORA"}
-                      <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" strokeWidth={5} />
-                    </Button>
+                      <div className="ml-2 w-3 h-3 border-[3px] border-black border-t-transparent animate-spin opacity-0" />
+                    </div>
                   </div>
                 </div>
               </Link>
@@ -314,9 +325,24 @@ export default function HomePage() {
               </div>
             </Link>
 
-            <div className="hidden lg:grid grid-cols-2 gap-2">
-               <QuickLink href="/config" icon={<Settings size={14}/>} label="CONFIG"/>
-               <QuickLink href="/profile" icon={<User size={14}/>} label="PERFIL"/>
+            <Link href="/history" className="block group">
+              <div className="bg-[#121214] border-2 border-black rounded-xl sm:rounded-2xl p-4 sm:p-5 lg:p-4 shadow-[6px_6px_0_0_#000] hover:border-[#ff0033]/30 transition-all relative overflow-hidden">
+                <div className="flex items-center justify-between mb-2 sm:mb-3 lg:mb-2">
+                  <div className="flex items-center gap-1 sm:gap-1.5">
+                    <div className="w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full bg-[#ff0033]" />
+                    <span className="text-[7px] sm:text-[8px] font-black text-neutral-700 uppercase tracking-[0.4em] italic">REGISTROS</span>
+                  </div>
+                  <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-neutral-700 group-hover:text-[#ff0033] transition-colors" />
+                </div>
+                <h4 className="text-lg sm:text-xl lg:text-lg font-black italic uppercase tracking-tighter text-white group-hover:text-[#ff0033] transition-colors leading-none">
+                  HISTÓRICO DE<br/>BATALHA.
+                </h4>
+              </div>
+            </Link>
+
+            <div className="hidden lg:grid grid-cols-2 gap-2 mt-auto">
+               <QuickLink href="/config" icon={<Settings size={14}/>} label="TREINOS"/>
+               <QuickLink href="/history" icon={<Clock size={14}/>} label="HISTÓRICO"/>
             </div>
           </div>
         </div>
@@ -335,6 +361,7 @@ function HeaderNavBtn({ href, children }: { href: string; children: React.ReactN
   )
 }
 
+
 function QuickLink({ href, icon, label }: { href: string; icon: React.ReactNode; label: string }) {
   return (
     <Link href={href} className="group">
@@ -344,8 +371,4 @@ function QuickLink({ href, icon, label }: { href: string; icon: React.ReactNode;
       </div>
     </Link>
   )
-}
-
-function cn(...classes: (string | boolean | undefined)[]) {
-  return classes.filter(Boolean).join(" ")
 }

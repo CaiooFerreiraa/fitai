@@ -1,49 +1,44 @@
 import NextAuth from "next-auth"
-import { PrismaAdapter } from "@auth/prisma-adapter"
+import CredentialsProvider from "next-auth/providers/credentials"
 import prisma from "@/infrastructure/database/prisma"
 
-import Credentials from "next-auth/providers/credentials"
-
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
-    Credentials({
+    CredentialsProvider({
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Senha", type: "password" }
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          console.log("AUTH_VERIFY: Missing credentials")
+        const email = credentials?.email as string | undefined
+        const password = credentials?.password as string | undefined
+
+        if (!email || !password) {
           return null
         }
-        
-        const email = credentials.email as string
-        const password = credentials.password as string
 
         try {
           const user = await prisma.user.findUnique({
             where: { email }
           })
 
-          console.log("AUTH_VERIFY: User lookup result:", !!user)
-
           if (!user || !user.password) {
-            console.log("AUTH_VERIFY: User not found or no password hash")
             return null
           }
 
           const bcrypt = await import("bcryptjs")
           const isPasswordValid = await bcrypt.compare(password, user.password)
 
-          console.log("AUTH_VERIFY: Password match:", isPasswordValid)
-
           if (!isPasswordValid) return null
 
-          return user
-        } catch (error: any) {
-          console.error("AUTH_VERIFY: Critical failure:", error.message || error)
+          return { 
+            id: user.id, 
+            email: user.email, 
+            name: user.name 
+          }
+        } catch (error) {
+          console.error("Auth error:", error)
           return null
         }
       }
@@ -56,11 +51,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/login",
   },
   callbacks: {
-    session({ session, user, token }) {
-      if (session.user) {
-        session.user.id = token.sub ?? ""
+    async session({ session, token }) {
+      if (session.user && token.sub) {
+        (session.user as any).id = token.sub
       }
       return session
     },
   },
+  trustHost: true,
 })

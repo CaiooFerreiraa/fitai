@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Inter, Outfit } from "next/font/google"
 import "./globals.css"
 import { Providers } from "@/components/providers"
@@ -15,6 +15,13 @@ export const metadata: Metadata = {
   },
 }
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: "#0a0a0b",
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -22,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning data-scroll-behavior="smooth">
-      <body className={`${inter.variable} ${outfit.variable} antialiased selection:bg-[#ff0033] selection:text-white`}>
+      <body suppressHydrationWarning className={`${inter.variable} ${outfit.variable} antialiased selection:bg-[#ff0033] selection:text-white`}>
         <Providers>
           {children}
         </Providers>

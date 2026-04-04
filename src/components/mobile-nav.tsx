@@ -1,63 +1,116 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { Menu, X, Home, Settings, User, Activity } from "lucide-react"
 import Link from "next/link"
-import { Home, Settings, User, Menu, X } from "lucide-react"
+import { useState, useEffect } from "react"
+import { usePathname } from "next/navigation"
+import { createPortal } from "react-dom"
+import { motion, AnimatePresence } from "framer-motion"
+import { SiteIcon } from "@/components/ui/site-icon"
+import { History as HistoryIcon } from "lucide-react"
 
 export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false)
-  const pathname = typeof window !== "undefined" ? window.location.pathname : ""
+  const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden"
-    } else {
-      document.body.style.overflow = ""
-    }
-    return () => {
-      document.body.style.overflow = ""
-    }
-  }, [isOpen])
+    setMounted(true)
+  }, [])
 
   const links = [
     { href: "/", label: "Home", icon: Home },
-    { href: "/config", label: "Config", icon: Settings },
+    { href: "/config", label: "Treinos", icon: Settings },
     { href: "/profile", label: "Perfil", icon: User },
+    { href: "/history", label: "Histórico", icon: HistoryIcon },
   ]
+
+  if (!mounted) return (
+    <button className="lg:hidden bg-[#ff0033] text-white p-2 rounded-lg border-2 border-black shadow-[2px_2px_0_#000] opacity-50 cursor-not-allowed">
+      <Menu size={18} strokeWidth={4} />
+    </button>
+  )
 
   return (
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="lg:hidden bg-[#ff0033] text-white p-2 rounded-lg border-2 border-black shadow-[2px_2px_0_#000]"
+        className="lg:hidden bg-[#ff0033] text-white p-2 rounded-lg border-2 border-black shadow-[2px_2px_0_#000] cursor-pointer"
         aria-label="Menu"
       >
         <Menu size={18} strokeWidth={4} />
       </button>
 
-      {isOpen && (
-        <div style={{ position: "fixed", inset: 0, zIndex: 9999 }}>
-          <div onClick={() => setIsOpen(false)} style={{ position: "absolute", inset: 0, backgroundColor: "rgba(0,0,0,0.95)" }} />
-          <nav style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: "260px", backgroundColor: "#0a0a0b", borderLeft: "4px solid #000", padding: "24px 16px", display: "flex", flexDirection: "column", gap: "8px" }}>
-            <button onClick={() => setIsOpen(false)} style={{ position: "absolute", top: "16px", right: "16px", backgroundColor: "#ff0033", border: "2px solid #000", borderRadius: "8px", padding: "6px", color: "white", cursor: "pointer" }}>
-              <X size={18} strokeWidth={4} />
-            </button>
-            <div style={{ height: "40px" }} />
-            {links.map(link => {
-              const Icon = link.icon
-              const isActive = pathname === link.href
-              return (
-                <Link key={link.href} href={link.href} onClick={() => setIsOpen(false)} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "14px", borderRadius: "10px", border: "3px solid #000", backgroundColor: isActive ? "#ff0033" : "#121214", color: isActive ? "white" : "#999", textDecoration: "none", fontWeight: 900, fontSize: "13px", textTransform: "uppercase", fontStyle: "italic" }}>
-                  <Icon size={18} strokeWidth={3} />
-                  {link.label}
-                </Link>
-              )
-            })}
-            <div style={{ marginTop: "auto", paddingTop: "16px", borderTop: "2px solid #1c1c1f", fontSize: "8px", color: "#555", textTransform: "uppercase", letterSpacing: "0.2em" }}>
-              FITAI v1.0
-            </div>
-          </nav>
-        </div>
+      {typeof document !== "undefined" && createPortal(
+        <AnimatePresence>
+          {isOpen && (
+            <>
+              {/* Backdrop Animado */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsOpen(false)}
+                className="fixed inset-0 z-[9998] bg-black/90 backdrop-blur-md"
+              />
+
+              {/* Menu Lateral Animado */}
+              <motion.nav
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                className="fixed top-0 right-0 z-[9999] w-[80%] max-w-[300px] h-screen bg-[#0a0a0b] border-l-4 border-black p-6 flex flex-col gap-4 shadow-[-20px_0_50px_rgba(0,0,0,1)]"
+              >
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-3">
+                    <SiteIcon className="w-10 h-10" />
+                    <span className="text-[10px] font-black italic tracking-[0.4em] text-white/90 uppercase border-l-2 border-black pl-3 ml-1">MENU<br/>TÁTICO</span>
+                  </div>
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="bg-[#ff0033] text-white p-2 border-2 border-black rounded-lg shadow-[3px_3px_0_0_#000] cursor-pointer active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                  >
+                    <X size={18} strokeWidth={4} />
+                  </button>
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  {links.map((link) => {
+                    const Icon = link.icon
+                    const isActive = pathname === link.href
+                    return (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        onClick={() => setIsOpen(false)}
+                        className={`
+                          flex items-center gap-4 p-4 rounded-xl border-2 border-black font-black uppercase italic text-[11px] tracking-widest transition-all
+                          ${isActive
+                            ? "bg-[#ff0033] text-white"
+                            : "bg-[#121214] text-neutral-500 hover:text-white"}
+                          shadow-[4px_4px_0_0_#000] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none
+                        `}
+                      >
+                        <Icon size={18} strokeWidth={3} className={isActive ? "text-white" : "text-[#ff0033]"} />
+                        {link.label}
+                      </Link>
+                    )
+                  })}
+                </div>
+
+                <div className="mt-auto">
+                  <div className="bg-[#121214] border-2 border-black rounded-xl p-4 shadow-[4px_4px_0_0_#000]">
+                    <div className="w-10 h-1.5 bg-[#ff0033] mb-3" />
+                    <span className="block text-[8px] font-black text-neutral-700 uppercase tracking-[0.4em] italic mb-1">CENTRAL DE COMANDO</span>
+                    <span className="block text-[10px] font-black text-white italic tracking-tighter">FITAI V.01 GLOBAL</span>
+                  </div>
+                </div>
+              </motion.nav>
+            </>
+          )}
+        </AnimatePresence>,
+        document.body
       )}
     </>
   )

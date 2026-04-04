@@ -4,7 +4,7 @@ import { signIn, signOut } from "@/lib/auth"
 import prisma from "@/infrastructure/database/prisma"
 import { AuthError } from "next-auth"
 
-export async function loginAction(prevState: any, formData: FormData) {
+export async function loginAction(prevState: unknown, formData: FormData) {
   const email = formData.get("email") as string
   const password = formData.get("password") as string
 
@@ -20,8 +20,9 @@ export async function loginAction(prevState: any, formData: FormData) {
       password,
       redirectTo: "/",
     })
-  } catch (error: any) {
-    console.error("LOGIN_ERROR:", error.message || error)
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error)
+    console.error("LOGIN_ERROR:", message)
     
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -36,7 +37,7 @@ export async function loginAction(prevState: any, formData: FormData) {
   }
 }
 
-export async function registerAction(prevState: any, formData: FormData) {
+export async function registerAction(prevState: unknown, formData: FormData) {
   const name = formData.get("name") as string
   const email = formData.get("email") as string
   const password = formData.get("password") as string

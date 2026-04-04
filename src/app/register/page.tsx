@@ -1,10 +1,12 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { registerAction } from "@/actions/auth-actions"
-import { Lock, User, Dumbbell, Sparkles, ArrowRight, Loader2, AlertCircle, Calendar, Users } from "lucide-react"
+import { Lock, User, Sparkles, ArrowRight, Loader2, AlertCircle, Calendar, Users } from "lucide-react"
+import { SiteIcon } from "@/components/ui/site-icon"
 import Link from "next/link"
 import { useFormStatus } from "react-dom"
 import { useActionState } from "react"
@@ -34,6 +36,11 @@ function SubmitButton() {
 
 export default function RegisterPage() {
   const [state, formAction] = useActionState(registerAction, undefined)
+  const [maxDate, setMaxDate] = useState<string>("")
+
+  useEffect(() => {
+    setMaxDate(new Date().toISOString().split('T')[0])
+  }, [])
 
   return (
     <main className="min-h-dvh bg-[#0a0a0b] text-white font-sans relative overflow-hidden noise-overlay">
@@ -53,9 +60,7 @@ export default function RegisterPage() {
         <div className="hidden lg:flex flex-col justify-between p-12 xl:p-20">
           {/* Logo */}
           <div className="flex items-center gap-4">
-            <div className="bg-[#ff0033] p-3 rounded-2xl border-4 border-black shadow-[6px_6px_0_0_#000]">
-              <Dumbbell className="w-7 h-7 text-white" strokeWidth={3} />
-            </div>
+            <SiteIcon className="w-6 h-6 sm:w-8 sm:h-8" showBackground={true} />
             <span className="text-2xl font-black italic tracking-tighter uppercase">
               FIT<span className="text-[#ff0033]">AI</span>
             </span>
@@ -180,7 +185,7 @@ export default function RegisterPage() {
                   name="dateOfBirth"
                   type="date"
                   required
-                  max={new Date().toISOString().split('T')[0]}
+                  max={maxDate}
                   className="h-14 sm:h-16 bg-[#0a0a0b] lg:bg-[#09090b] border-2 border-[#1c1c1f] focus:border-[#ff0033] text-sm sm:text-base font-bold uppercase rounded-2xl px-5 cursor-text transition-all text-white focus:ring-0 focus-visible:ring-0"
                 />
               </div>
@@ -207,7 +212,7 @@ export default function RegisterPage() {
               {/* Tempo de Treino */}
               <div className="space-y-2 group">
                 <Label htmlFor="trainingTime" className="flex items-center gap-2 text-[10px] font-black text-neutral-600 uppercase tracking-[0.4em] italic group-focus-within:text-[#ff0033] transition-colors">
-                  <Dumbbell className="w-3 h-3" strokeWidth={4} />
+                  <SiteIcon className="w-4 h-4" showBackground={false} />
                   [ 06 ] TEMPO DE TREINO
                 </Label>
                 <select

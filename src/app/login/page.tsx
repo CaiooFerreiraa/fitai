@@ -1,12 +1,13 @@
 "use client"
 
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { signIn } from "next-auth/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Lock, User, ArrowRight, Loader2, AlertCircle, Dumbbell } from "lucide-react"
-import { useState } from "react"
-import { signIn } from "next-auth/react"
-import { useRouter } from "next/navigation"
+import { Lock, User, ArrowRight, Loader2, AlertCircle } from "lucide-react"
+import { SiteIcon } from "@/components/ui/site-icon"
 import Link from "next/link"
 
 export default function LoginPage() {
@@ -24,7 +25,12 @@ export default function LoginPage() {
     const password = formData.get("password") as string
 
     try {
-      const res = await signIn("credentials", { email, password, redirect: false })
+      const res = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      })
+
       if (res?.error) {
         setError("CREDENCIAIS REJEITADAS. ACESSO NEGADO À BASE.")
       } else {
@@ -57,7 +63,7 @@ export default function LoginPage() {
           {/* Logo */}
           <div className="flex items-center gap-4">
             <div className="bg-[#ff0033] p-3 rounded-2xl border-4 border-black shadow-[6px_6px_0_0_#000]">
-              <Dumbbell className="w-7 h-7 text-white" strokeWidth={3} />
+              <SiteIcon className="w-7 h-7 text-white" />
             </div>
             <span className="text-2xl font-black italic tracking-tighter uppercase">
               FIT<span className="text-[#ff0033]">AI</span>

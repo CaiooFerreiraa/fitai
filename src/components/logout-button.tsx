@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 export function LogoutButton() {
   const handleLogout = async () => {
     try {
-      await signOut({ callbackUrl: "/login" })
+      await signOut({ redirect: true, callbackUrl: "/login" })
     } catch (error) {
       console.error("Logout error:", error)
     }
