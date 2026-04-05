@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Exercise } from "@/domain/entities/workout"
 import { Button } from "@/components/ui/button"
 import { NumberInput } from "@/components/ui/number-input"
@@ -8,10 +8,12 @@ import { Label } from "@/components/ui/label"
 import { Timer } from "@/components/timer"
 import { logExerciseAction } from "@/actions/workout-actions"
 import { toast } from "sonner"
-import { Loader2, Dumbbell, Sparkles, Target, ChevronRight, CheckCircle2, ArrowLeft, Scale } from "lucide-react"
+import { Loader2, Dumbbell, Sparkles, Target, ChevronRight, CheckCircle2, ArrowLeft, Scale, RotateCcw } from "lucide-react"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { getAiSlogansAction } from "@/actions/workout-actions"
+
+// ─── Persistent Session State ────────────────────────────────────────────────
 
 interface SetLog {
   set: number
@@ -19,7 +21,55 @@ interface SetLog {
   reps: number
 }
 
-export function WorkoutSession({ exercises }: { exercises: Exercise[] }) {
+interface SessionState {
+  planId: string
+  currentIdx: number
+  currentSet: number
+  weight: number
+  setLogs: SetLog[]
+  incentive: string | null
+  startedAt: number // timestamp
+}
+
+function buildStorageKey(planId: string): string {
+  return `fitai_session_${planId}`
+}
+
+function saveSession(state: SessionState): void {
+  try {
+    localStorage.setItem(buildStorageKey(state.planId), JSON.stringify(state))
+  } catch {
+    // ignore quota errors
+  }
+}
+
+function loadSession(planId: string): SessionState | null {
+  try {
+    const raw = localStorage.getItem(buildStorageKey(planId))
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as SessionState
+    // Expire sessions after 6 hours
+    if (Date.now() - parsed.startedAt > 6 * 60 * 60 * 1000) {
+      localStorage.removeItem(buildStorageKey(planId))
+      return null
+    }
+    return parsed
+  } catch {
+    return null
+  }
+}
+
+function clearSession(planId: string): void {
+  try {
+    localStorage.removeItem(buildStorageKey(planId))
+  } catch {
+    // ignore
+  }
+}
+
+// ─── Component ───────────────────────────────────────────────────────────────
+
+export function WorkoutSession({ exercises, planId }: { exercises: Exercise[]; planId: string }) {
   const [currentIdx, setCurrentIdx] = useState(0)
   const [currentSet, setCurrentSet] = useState(1)
   const [weight, setWeight] = useState<number>(0)
@@ -28,10 +78,60 @@ export function WorkoutSession({ exercises }: { exercises: Exercise[] }) {
   const [incentive, setIncentive] = useState<string | null>(null)
   const [showTimer, setShowTimer] = useState(false)
   const [finishSlogan, setFinishSlogan] = useState("OPERAÇÃO FINALIZADA.")
+  const [restoredBanner, setRestoredBanner] = useState(false)
+  const [hydrated, setHydrated] = useState(false)
+
+  // ─── Hydrate from localStorage ───────────────────────────────────────────
+  useEffect(() => {
+    const saved = loadSession(planId)
+    if (saved && saved.currentIdx < exercises.length) {
+      setCurrentIdx(saved.currentIdx)
+      setCurrentSet(saved.currentSet)
+      setWeight(saved.weight)
+      setSetLogs(saved.setLogs)
+      setIncentive(saved.incentive)
+      setRestoredBanner(true)
+      setTimeout(() => setRestoredBanner(false), 5000)
+    }
+    setHydrated(true)
+  }, [planId, exercises.length])
+
+  // ─── Persist whenever critical state changes ─────────────────────────────
+  const persistState = useCallback(() => {
+    if (!hydrated) return
+    const state: SessionState = {
+      planId,
+      currentIdx,
+      currentSet,
+      weight,
+      setLogs,
+      incentive,
+      startedAt: Date.now(),
+    }
+    saveSession(state)
+  }, [hydrated, planId, currentIdx, currentSet, weight, setLogs, incentive])
+
+  useEffect(() => {
+    persistState()
+  }, [persistState])
+
+  // ─── Scroll Lock ────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (showTimer) {
+      document.body.style.overflow = "hidden"
+    } else {
+      document.body.style.overflow = ""
+    }
+    return () => {
+      document.body.style.overflow = ""
+    }
+  }, [showTimer])
 
   const currentExercise = exercises[currentIdx]
 
+  // ─── Finished screen ─────────────────────────────────────────────────────
   if (!currentExercise) {
+    clearSession(planId)
     return (
       <div className="flex flex-col items-center justify-center p-6 md:p-12 bg-gradient-to-br from-[#1c1c1f] via-[#121214] to-[#0a0a0b] border-4 border-black rounded-[2rem] animate-in zoom-in duration-700 shadow-[20px_20px_60px_-10px_rgba(0,0,0,0.8)] relative overflow-hidden noise-overlay">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,0,51,0.06),transparent_70%)] pointer-events-none" />
@@ -59,6 +159,8 @@ export function WorkoutSession({ exercises }: { exercises: Exercise[] }) {
     )
   }
 
+  // ─── Handlers ────────────────────────────────────────────────────────────
+
   const handleFinishSet = async () => {
     const log: SetLog = { set: currentSet, weight, reps: currentExercise.reps }
 
@@ -84,8 +186,7 @@ export function WorkoutSession({ exercises }: { exercises: Exercise[] }) {
         })
         setSetLogs([])
         setIncentive(res.incentive)
-        
-        // Fetch finish slogan if it's the last exercise
+
         if (currentIdx + 1 === exercises.length) {
           getAiSlogansAction(["session_finish"]).then(s => setFinishSlogan(s.session_finish))
         }
@@ -113,9 +214,51 @@ export function WorkoutSession({ exercises }: { exercises: Exercise[] }) {
     setShowTimer(false)
   }
 
+  const handleReset = () => {
+    clearSession(planId)
+    setCurrentIdx(0)
+    setCurrentSet(1)
+    setWeight(0)
+    setSetLogs([])
+    setIncentive(null)
+    setShowTimer(false)
+    toast("SESSÃO REINICIADA", { description: "PROTOCOLO ZERADO. RECOMEÇAR." })
+  }
+
+  // ─── Render ───────────────────────────────────────────────────────────────
+
   return (
     <div className="flex flex-col gap-5 md:gap-8 w-full animate-in fade-in slide-in-from-bottom-6 duration-700 relative">
 
+      {/* ── Restored banner ── */}
+      {restoredBanner && (
+        <div className="animate-in slide-in-from-top-4 duration-500 bg-[#ff0033]/10 border-2 border-[#ff0033]/30 rounded-2xl px-5 py-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-[#ff0033] animate-ping" />
+            <span className="text-[10px] font-black italic uppercase tracking-widest text-[#ff0033]">
+              SESSÃO ANTERIOR RESTAURADA — {exercises[currentIdx]?.name}
+            </span>
+          </div>
+          <button
+            onClick={handleReset}
+            id="reset-session-btn"
+            className="flex items-center gap-1.5 text-[9px] font-black italic uppercase tracking-widest text-neutral-500 hover:text-white transition-colors cursor-pointer"
+          >
+            <RotateCcw size={11} strokeWidth={4} />
+            REINICIAR
+          </button>
+        </div>
+      )}
+
+      {/* ── Progress bar ── */}
+      <div className="w-full h-1 bg-black rounded-full overflow-hidden">
+        <div
+          className="h-full bg-[#ff0033] transition-all duration-700 shadow-[0_0_8px_#ff0033]"
+          style={{ width: `${(currentIdx / exercises.length) * 100}%` }}
+        />
+      </div>
+
+      {/* ── Exercise card ── */}
       <div className="relative overflow-hidden bg-[#121214] border-2 md:border-4 border-black rounded-2xl md:rounded-[2.5rem] p-5 md:p-8 lg:p-10 group hover:border-[#ff0033]/20 transition-all shadow-[8px_8px_0_0_#000] md:shadow-[12px_12px_0_0_#000]">
         <div className="absolute -top-6 -right-6 opacity-[0.03] group-hover:scale-110 group-hover:-rotate-6 transition-all duration-700 pointer-events-none">
           <Dumbbell className="w-32 h-32 md:w-48 md:h-48 text-white" strokeWidth={4} />
@@ -152,15 +295,26 @@ export function WorkoutSession({ exercises }: { exercises: Exercise[] }) {
                 </span>
               </div>
             </div>
+
+            {/* Sets done chips */}
+            {setLogs.length > 0 && (
+              <div className="bg-black/60 px-4 py-2.5 rounded-xl border border-white/5 flex flex-col gap-0.5">
+                <span className="text-[7px] font-black text-[#ff0033] uppercase tracking-[0.4em] italic leading-none">SÉRIES FEITAS</span>
+                <div className="flex items-center gap-1 mt-1">
+                  {setLogs.map((s, i) => (
+                    <div key={i} className="bg-[#ff0033]/20 border border-[#ff0033]/30 rounded-md px-1.5 py-0.5">
+                      <span className="text-[8px] font-black text-[#ff0033] italic">{s.weight}KG</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       <div className="relative">
-        <div className={cn(
-          "space-y-4 md:space-y-6 transition-all duration-700",
-          showTimer && !incentive ? "opacity-[0.05] blur-xl scale-[0.98] pointer-events-none" : "opacity-100 scale-100"
-        )}>
+        <div className="space-y-4 md:space-y-6">
 
           <div className="bg-[#121214] border-2 md:border-4 border-black rounded-[1.5rem] md:rounded-[2rem] p-5 md:p-8 shadow-[8px_8px_0_0_#000] relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,0,51,0.03),transparent_60%)] pointer-events-none" />
@@ -206,6 +360,7 @@ export function WorkoutSession({ exercises }: { exercises: Exercise[] }) {
 
           {!incentive ? (
             <Button
+              id="finish-set-btn"
               onClick={handleFinishSet}
               disabled={loading}
               className="w-full h-16 md:h-20 bg-[#ff0033] hover:bg-[#ff1100] text-white rounded-xl md:rounded-2xl font-black text-lg md:text-xl lg:text-2xl cursor-pointer uppercase italic transition-all shadow-[6px_6px_0_0_#000000] flex justify-between items-center px-6 md:px-10 active:translate-x-1 active:translate-y-1 active:shadow-none disabled:opacity-30 border-2 md:border-4 border-black group/btn relative overflow-hidden"
@@ -240,6 +395,7 @@ export function WorkoutSession({ exercises }: { exercises: Exercise[] }) {
               </div>
 
               <Button
+                id="next-exercise-btn"
                 onClick={nextExercise}
                 className="w-full h-16 md:h-20 bg-white hover:bg-neutral-100 text-black rounded-xl md:rounded-2xl font-black text-base md:text-xl lg:text-2xl cursor-pointer uppercase italic transition-all flex items-center justify-between px-6 md:px-10 border-2 md:border-4 border-black shadow-[6px_6px_0_0_#000] md:shadow-[10px_10px_0_0_#000] active:translate-x-1 active:translate-y-1 active:shadow-none group"
               >
@@ -253,15 +409,14 @@ export function WorkoutSession({ exercises }: { exercises: Exercise[] }) {
         </div>
 
         {showTimer && !incentive && (
-          <div className="absolute inset-x-0 -inset-y-5 z-30 flex items-center justify-center animate-in fade-in zoom-in duration-500 px-2 lg:px-6">
-            <div className="flex flex-col items-center w-full bg-[#0a0a0b]/98 backdrop-blur-3xl p-8 md:p-12 lg:p-16 rounded-[2rem] md:rounded-[3rem] border-2 md:border-4 border-black shadow-[20px_20px_100px_-5px_rgba(0,0,0,1)] relative overflow-hidden">
-               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,0,51,0.05),transparent_70%)] pointer-events-none" />
-               <div className="relative z-10 w-full mb-6 italic">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-[#0a0a0b]/95 backdrop-blur-2xl animate-in fade-in duration-300">
+            <div className="w-full max-w-sm sm:max-w-md flex flex-col items-center gap-5">
+               <div className="w-full">
                   <Timer initialTime={currentExercise.timer} onComplete={() => setShowTimer(false)} />
                </div>
                <button
                  onClick={() => setShowTimer(false)}
-                 className="relative z-10 text-neutral-700 hover:text-[#ff0033] uppercase font-black tracking-[0.4em] text-[9px] md:text-[10px] cursor-pointer transition-all pt-4 border-t border-white/5 w-full text-center italic"
+                 className="text-neutral-700 hover:text-[#ff0033] uppercase font-black tracking-[0.4em] text-[9px] sm:text-[10px] cursor-pointer transition-all text-center italic"
                >
                  CANCELAR REPOUSO TÁTICO
                </button>
@@ -269,6 +424,17 @@ export function WorkoutSession({ exercises }: { exercises: Exercise[] }) {
           </div>
         )}
       </div>
+
+      {/* ── Reset session button ── */}
+      {!restoredBanner && currentIdx > 0 && (
+        <button
+          onClick={handleReset}
+          className="text-[9px] font-black italic uppercase tracking-widest text-neutral-700 hover:text-[#ff0033] transition-colors cursor-pointer flex items-center gap-1.5 justify-center pt-2"
+        >
+          <RotateCcw size={11} strokeWidth={4} />
+          REINICIAR SESSÃO
+        </button>
+      )}
     </div>
   )
 }

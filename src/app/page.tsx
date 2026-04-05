@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import {
   Loader2, Settings,
-  User, Zap, Trophy, Check, X, BookOpen, Clock
+  User, Zap, Trophy, Check, X, BookOpen, Clock, Play
 } from "lucide-react"
 import { SiteIcon } from "@/components/ui/site-icon"
 import Link from "next/link"
@@ -20,6 +20,41 @@ import { getAiSlogansAction } from "@/actions/workout-actions"
 import { MobileNav } from "@/components/mobile-nav"
 import { LogoutButton } from "@/components/logout-button"
 import { cn } from "@/lib/utils"
+
+interface ActiveSessionInfo {
+  planId: string
+  planName: string
+  currentIdx: number
+  totalExercises: number
+}
+
+function getActiveSession(plans: WorkoutPlan[]): ActiveSessionInfo | null {
+  try {
+    for (const plan of plans) {
+      if (!plan.id) continue
+      const key = `fitai_session_${plan.id}`
+      const raw = localStorage.getItem(key)
+      if (!raw) continue
+      const parsed = JSON.parse(raw)
+      if (Date.now() - parsed.startedAt > 6 * 60 * 60 * 1000) {
+        localStorage.removeItem(key)
+        continue
+      }
+      if (parsed.currentIdx < plan.exercises.length) {
+        if (!plan.id) continue
+        return {
+          planId: plan.id,
+          planName: plan.name ?? plan.dayOfWeek ?? "PROTOCOLO",
+          currentIdx: parsed.currentIdx,
+          totalExercises: plan.exercises.length
+        }
+      }
+    }
+  } catch {
+    // ignore
+  }
+  return null
+}
 
 const DAY_LABELS: Record<DayOfWeek, string> = {
   MONDAY:    "SEG",
@@ -37,6 +72,7 @@ export default function HomePage() {
   const [plans, setPlans] = useState<WorkoutPlan[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedDay, setSelectedDay] = useState<DayOfWeek | null>(null)
+  const [activeSession, setActiveSession] = useState<ActiveSessionInfo | null>(null)
   
   const [loggingExercise, setLoggingExercise] = useState<Exercise | null>(null)
   const [quickWeight, setQuickWeight] = useState(0)
@@ -64,6 +100,9 @@ export default function HomePage() {
       getMyWorkoutPlans().then((res: WorkoutPlan[]) => {
         setPlans(res)
         setLoading(false)
+        // Detect active sessions after plans are loaded
+        const session_info = getActiveSession(res)
+        setActiveSession(session_info)
       })
       getAiSlogansAction(["home_subtitle", "home_workout_day"]).then(setSlogans)
     }
@@ -144,6 +183,29 @@ export default function HomePage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-3 sm:px-4 md:px-8 lg:px-10 pt-3 sm:pt-4 lg:pt-6 space-y-3 sm:space-y-4 lg:space-y-5">
+
+        {/* ── Active Session Banner ── */}
+        {activeSession && (
+          <Link href={`/workout/${activeSession.planId}`} id="resume-session-banner" className="block">
+            <div className="bg-[#ff0033]/10 border-2 border-[#ff0033]/40 rounded-xl sm:rounded-2xl p-3 sm:p-4 flex items-center justify-between gap-3 shadow-[4px_4px_0_0_#000] hover:border-[#ff0033]/70 transition-all group animate-in slide-in-from-top-2 duration-500">
+              <div className="flex items-center gap-3">
+                <div className="bg-[#ff0033] p-2 rounded-lg border-2 border-black shadow-[2px_2px_0_0_#000] shrink-0">
+                  <Play size={14} className="text-white" strokeWidth={4} />
+                </div>
+                <div>
+                  <p className="text-[9px] sm:text-[10px] font-black text-[#ff0033] uppercase tracking-widest italic">SESSÃO EM ANDAMENTO</p>
+                  <p className="text-xs sm:text-sm font-black italic uppercase tracking-tight text-white leading-none">
+                    {activeSession.planName} · EX. {activeSession.currentIdx + 1}/{activeSession.totalExercises}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#ff0033] animate-ping" />
+                <span className="text-[9px] font-black italic uppercase tracking-widest text-white hidden sm:inline">CONTINUAR</span>
+              </div>
+            </div>
+          </Link>
+        )}
 
         <section className="bg-[#121214] border-2 lg:border-2 border-black rounded-xl sm:rounded-2xl lg:rounded-2xl p-4 sm:p-5 lg:p-5 relative overflow-hidden group shadow-[6px_6px_0_0_#000]">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(255,0,51,0.03),transparent_60%)] pointer-events-none" />

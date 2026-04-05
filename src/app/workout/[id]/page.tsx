@@ -77,7 +77,7 @@ export default async function WorkoutPage({ params }: { params: Promise<{ id: st
 
           {/* ── Session Component ── */}
           <div className="lg:col-span-3 order-1">
-            <WorkoutSession exercises={plan.exercises} />
+            <WorkoutSession exercises={plan.exercises} planId={plan.id} />
           </div>
 
           {/* ── Sidebar ── */}
